@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYER
+  CANDIDATE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  image        String?
+  passwordHash String?
+  role         Role     @default(CANDIDATE)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  jobs      Job[]
+  candidates Candidate[]
+  notifications Notification[]
+
+  @@map("users_sync")
+}
+
+model Job {
+  id               Int      @id @default(autoincrement())
+  title            String
+  company          String
+  location         String
+  type             String   // 'CDI', 'CDD', 'Stage', 'Freelance'
+  salaryMin        Int?
+  salaryMax        Int?
+  currency         String   @default("EUR")
+  description      String
+  requirements     String?
+  benefits         String?
+  remoteWork       Boolean  @default(false)
+  experienceLevel  String?
+  contractDuration String?
+  applicationUrl   String?
+  applicationEmail String?
+  companyLogo      String?
+  companyWebsite   String?
+  tags             String[] // Array of skill tags
+  featured         Boolean  @default(false)
+  status           String   @default("active") // 'active', 'paused', 'closed'
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  expiresAt        DateTime?
+  createdBy        String?
+  viewsCount       Int      @default(0)
+
+  // Relations
+  applications     Application[]
+  creator          User?     @relation(fields: [createdBy], references: [id])
+
+  @@map("jobs")
+}
+
+model Candidate {
+  id           Int      @id @default(autoincrement())
+  userId       String   @unique
+  firstName    String?
+  lastName     String?
+  phone        String?
+  location     String?
+  bio          String?
+  resumeUrl    String?
+  linkedinUrl  String?
+  portfolioUrl String?
+  skills       String[]
+  experienceLevel String?
+  availability String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user         User     @relation(fields: [userId], references: [id])
+  applications Application[]
+
+  @@map("candidates")
+}
+
+model Application {
+  id          Int      @id @default(autoincrement())
+  jobId       Int
+  candidateId Int
+  coverLetter String?
+  status      String   @default("pending") // 'pending', 'reviewed', 'accepted', 'rejected'
+  appliedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  job         Job       @relation(fields: [jobId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+
+  @@map("applications")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  type      String   // 'application_status', 'job_match', 'system'
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}

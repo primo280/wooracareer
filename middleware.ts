@@ -9,12 +9,12 @@ export default withAuth(
     // Content Security Policy to allow inline scripts and other necessary resources
     const cspHeader = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' https: wss: ws:",
-      "frame-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://*.vercel.app https://vercel.live",
+      "style-src 'self' 'unsafe-inline' https://*.vercel.app",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' data: https://*.vercel.app",
+      "connect-src 'self' https: wss: ws: https://*.vercel.app https://vercel.live",
+      "frame-src 'self' https://*.vercel.app",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -60,7 +60,6 @@ export default withAuth(
 export const config = {
   matcher: [
     "/api/applications",
-    "/api/admin/:path*",
     "/dashboard",
     "/profile",
     "/admin/:path*"

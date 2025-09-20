@@ -27,19 +27,27 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
+        const pathname = req.nextUrl.pathname
+
         // Allow public access to sign-in page, sign-up page, and static assets
         if (
           !token &&
-          req.nextUrl.pathname !== "/sign-in" &&
-          req.nextUrl.pathname !== "/sign-up" &&
-          !req.nextUrl.pathname.startsWith("/_next")
+          pathname !== "/sign-in" &&
+          pathname !== "/sign-up" &&
+          !pathname.startsWith("/_next") &&
+          !pathname.startsWith("/api/auth") &&
+          !pathname.startsWith("/public")
         ) {
           return false
         }
 
-        // Check role-based access
-        if (req.nextUrl.pathname.startsWith("/admin")) {
-          return token?.role === "ADMIN"
+        // Check role-based access for admin routes
+        if (pathname.startsWith("/admin")) {
+          const hasAdminRole = token?.role === "ADMIN"
+          if (!hasAdminRole) {
+            console.log("Access denied to admin route:", pathname, "User role:", token?.role)
+          }
+          return hasAdminRole
         }
 
         // For other protected routes, just check if user is authenticated
@@ -50,5 +58,11 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ["/api/applications", "/dashboard", "/profile", "/admin"]
+  matcher: [
+    "/api/applications",
+    "/api/admin/:path*",
+    "/dashboard",
+    "/profile",
+    "/admin/:path*"
+  ]
 }

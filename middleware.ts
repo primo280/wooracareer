@@ -1,8 +1,28 @@
 import { withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server"
 
 export default withAuth(
   function middleware(req) {
-    // Middleware executed for protected routes
+    // Add CSP headers to allow inline scripts
+    const response = NextResponse.next()
+
+    // Content Security Policy to allow inline scripts and other necessary resources
+    const cspHeader = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https:",
+      "font-src 'self' data:",
+      "connect-src 'self' https: wss: ws:",
+      "frame-src 'self'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join('; ')
+
+    response.headers.set('Content-Security-Policy', cspHeader)
+
+    return response
   },
   {
     callbacks: {

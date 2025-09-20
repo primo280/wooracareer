@@ -73,6 +73,19 @@ export const authOptions = {
         session.user.role = token.role as string
       }
       return session
+    },
+    async signIn({ user, account, profile, email, credentials }: any) {
+      console.log("Sign in callback - User:", user?.email, "Role:", user?.role)
+      return true
+    },
+    async redirect({ url, baseUrl }: any) {
+      // Redirect logic based on user role
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`
+      } else if (new URL(url).origin === baseUrl) {
+        return url
+      }
+      return baseUrl
     }
   },
   debug: process.env.NODE_ENV === "development",

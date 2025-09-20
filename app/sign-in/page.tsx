@@ -27,7 +27,12 @@ export default function SignInPage() {
   // Redirect if already signed in
   useEffect(() => {
     if (session?.user) {
-      router.push("/dashboard")
+      // Redirect based on user role
+      if (session.user.role === "ADMIN") {
+        router.push("/admin")
+      } else {
+        router.push("/dashboard")
+      }
     }
   }, [session, router])
 
@@ -42,10 +47,13 @@ export default function SignInPage() {
         password,
         redirect: false,
       })
+
       if (result?.error) {
         setError(result.error)
       } else {
-        router.push("/dashboard")
+        // Let NextAuth handle the redirection based on callbacks
+        // The callback will redirect to the appropriate page
+        window.location.href = result?.url || "/dashboard"
       }
     } catch (err: any) {
       setError(err.message || "Erreur de connexion")

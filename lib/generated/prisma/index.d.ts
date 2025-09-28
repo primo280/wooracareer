@@ -5216,6 +5216,7 @@ export namespace Prisma {
     jobId: number | null
     candidateId: number | null
     coverLetter: string | null
+    cvUrl: string | null
     status: string | null
     appliedAt: Date | null
     updatedAt: Date | null
@@ -5226,6 +5227,7 @@ export namespace Prisma {
     jobId: number | null
     candidateId: number | null
     coverLetter: string | null
+    cvUrl: string | null
     status: string | null
     appliedAt: Date | null
     updatedAt: Date | null
@@ -5236,6 +5238,7 @@ export namespace Prisma {
     jobId: number
     candidateId: number
     coverLetter: number
+    cvUrl: number
     status: number
     appliedAt: number
     updatedAt: number
@@ -5260,6 +5263,7 @@ export namespace Prisma {
     jobId?: true
     candidateId?: true
     coverLetter?: true
+    cvUrl?: true
     status?: true
     appliedAt?: true
     updatedAt?: true
@@ -5270,6 +5274,7 @@ export namespace Prisma {
     jobId?: true
     candidateId?: true
     coverLetter?: true
+    cvUrl?: true
     status?: true
     appliedAt?: true
     updatedAt?: true
@@ -5280,6 +5285,7 @@ export namespace Prisma {
     jobId?: true
     candidateId?: true
     coverLetter?: true
+    cvUrl?: true
     status?: true
     appliedAt?: true
     updatedAt?: true
@@ -5377,6 +5383,7 @@ export namespace Prisma {
     jobId: number
     candidateId: number
     coverLetter: string | null
+    cvUrl: string | null
     status: string
     appliedAt: Date
     updatedAt: Date
@@ -5406,6 +5413,7 @@ export namespace Prisma {
     jobId?: boolean
     candidateId?: boolean
     coverLetter?: boolean
+    cvUrl?: boolean
     status?: boolean
     appliedAt?: boolean
     updatedAt?: boolean
@@ -5418,6 +5426,7 @@ export namespace Prisma {
     jobId?: boolean
     candidateId?: boolean
     coverLetter?: boolean
+    cvUrl?: boolean
     status?: boolean
     appliedAt?: boolean
     updatedAt?: boolean
@@ -5430,6 +5439,7 @@ export namespace Prisma {
     jobId?: boolean
     candidateId?: boolean
     coverLetter?: boolean
+    cvUrl?: boolean
     status?: boolean
     appliedAt?: boolean
     updatedAt?: boolean
@@ -5442,12 +5452,13 @@ export namespace Prisma {
     jobId?: boolean
     candidateId?: boolean
     coverLetter?: boolean
+    cvUrl?: boolean
     status?: boolean
     appliedAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobId" | "candidateId" | "coverLetter" | "status" | "appliedAt" | "updatedAt", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobId" | "candidateId" | "coverLetter" | "cvUrl" | "status" | "appliedAt" | "updatedAt", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     job?: boolean | JobDefaultArgs<ExtArgs>
     candidate?: boolean | CandidateDefaultArgs<ExtArgs>
@@ -5472,6 +5483,7 @@ export namespace Prisma {
       jobId: number
       candidateId: number
       coverLetter: string | null
+      cvUrl: string | null
       status: string
       appliedAt: Date
       updatedAt: Date
@@ -5904,6 +5916,7 @@ export namespace Prisma {
     readonly jobId: FieldRef<"Application", 'Int'>
     readonly candidateId: FieldRef<"Application", 'Int'>
     readonly coverLetter: FieldRef<"Application", 'String'>
+    readonly cvUrl: FieldRef<"Application", 'String'>
     readonly status: FieldRef<"Application", 'String'>
     readonly appliedAt: FieldRef<"Application", 'DateTime'>
     readonly updatedAt: FieldRef<"Application", 'DateTime'>
@@ -7525,6 +7538,7 @@ export namespace Prisma {
     jobId: 'jobId',
     candidateId: 'candidateId',
     coverLetter: 'coverLetter',
+    cvUrl: 'cvUrl',
     status: 'status',
     appliedAt: 'appliedAt',
     updatedAt: 'updatedAt'
@@ -8014,6 +8028,7 @@ export namespace Prisma {
     jobId?: IntFilter<"Application"> | number
     candidateId?: IntFilter<"Application"> | number
     coverLetter?: StringNullableFilter<"Application"> | string | null
+    cvUrl?: StringNullableFilter<"Application"> | string | null
     status?: StringFilter<"Application"> | string
     appliedAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -8026,6 +8041,7 @@ export namespace Prisma {
     jobId?: SortOrder
     candidateId?: SortOrder
     coverLetter?: SortOrderInput | SortOrder
+    cvUrl?: SortOrderInput | SortOrder
     status?: SortOrder
     appliedAt?: SortOrder
     updatedAt?: SortOrder
@@ -8041,6 +8057,7 @@ export namespace Prisma {
     jobId?: IntFilter<"Application"> | number
     candidateId?: IntFilter<"Application"> | number
     coverLetter?: StringNullableFilter<"Application"> | string | null
+    cvUrl?: StringNullableFilter<"Application"> | string | null
     status?: StringFilter<"Application"> | string
     appliedAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -8053,6 +8070,7 @@ export namespace Prisma {
     jobId?: SortOrder
     candidateId?: SortOrder
     coverLetter?: SortOrderInput | SortOrder
+    cvUrl?: SortOrderInput | SortOrder
     status?: SortOrder
     appliedAt?: SortOrder
     updatedAt?: SortOrder
@@ -8071,6 +8089,7 @@ export namespace Prisma {
     jobId?: IntWithAggregatesFilter<"Application"> | number
     candidateId?: IntWithAggregatesFilter<"Application"> | number
     coverLetter?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    cvUrl?: StringNullableWithAggregatesFilter<"Application"> | string | null
     status?: StringWithAggregatesFilter<"Application"> | string
     appliedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
@@ -8563,6 +8582,7 @@ export namespace Prisma {
 
   export type ApplicationCreateInput = {
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -8575,6 +8595,7 @@ export namespace Prisma {
     jobId: number
     candidateId: number
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -8582,6 +8603,7 @@ export namespace Prisma {
 
   export type ApplicationUpdateInput = {
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8594,6 +8616,7 @@ export namespace Prisma {
     jobId?: IntFieldUpdateOperationsInput | number
     candidateId?: IntFieldUpdateOperationsInput | number
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8604,6 +8627,7 @@ export namespace Prisma {
     jobId: number
     candidateId: number
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -8611,6 +8635,7 @@ export namespace Prisma {
 
   export type ApplicationUpdateManyMutationInput = {
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8621,6 +8646,7 @@ export namespace Prisma {
     jobId?: IntFieldUpdateOperationsInput | number
     candidateId?: IntFieldUpdateOperationsInput | number
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9162,6 +9188,7 @@ export namespace Prisma {
     jobId?: SortOrder
     candidateId?: SortOrder
     coverLetter?: SortOrder
+    cvUrl?: SortOrder
     status?: SortOrder
     appliedAt?: SortOrder
     updatedAt?: SortOrder
@@ -9178,6 +9205,7 @@ export namespace Prisma {
     jobId?: SortOrder
     candidateId?: SortOrder
     coverLetter?: SortOrder
+    cvUrl?: SortOrder
     status?: SortOrder
     appliedAt?: SortOrder
     updatedAt?: SortOrder
@@ -9188,6 +9216,7 @@ export namespace Prisma {
     jobId?: SortOrder
     candidateId?: SortOrder
     coverLetter?: SortOrder
+    cvUrl?: SortOrder
     status?: SortOrder
     appliedAt?: SortOrder
     updatedAt?: SortOrder
@@ -10050,6 +10079,7 @@ export namespace Prisma {
 
   export type ApplicationCreateWithoutJobInput = {
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -10060,6 +10090,7 @@ export namespace Prisma {
     id?: number
     candidateId: number
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -10130,6 +10161,7 @@ export namespace Prisma {
     jobId?: IntFilter<"Application"> | number
     candidateId?: IntFilter<"Application"> | number
     coverLetter?: StringNullableFilter<"Application"> | string | null
+    cvUrl?: StringNullableFilter<"Application"> | string | null
     status?: StringFilter<"Application"> | string
     appliedAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -10205,6 +10237,7 @@ export namespace Prisma {
 
   export type ApplicationCreateWithoutCandidateInput = {
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -10215,6 +10248,7 @@ export namespace Prisma {
     id?: number
     jobId: number
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -10788,6 +10822,7 @@ export namespace Prisma {
     id?: number
     candidateId: number
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -10795,6 +10830,7 @@ export namespace Prisma {
 
   export type ApplicationUpdateWithoutJobInput = {
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10805,6 +10841,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     candidateId?: IntFieldUpdateOperationsInput | number
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10814,6 +10851,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     candidateId?: IntFieldUpdateOperationsInput | number
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10823,6 +10861,7 @@ export namespace Prisma {
     id?: number
     jobId: number
     coverLetter?: string | null
+    cvUrl?: string | null
     status?: string
     appliedAt?: Date | string
     updatedAt?: Date | string
@@ -10830,6 +10869,7 @@ export namespace Prisma {
 
   export type ApplicationUpdateWithoutCandidateInput = {
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10840,6 +10880,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     jobId?: IntFieldUpdateOperationsInput | number
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10849,6 +10890,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     jobId?: IntFieldUpdateOperationsInput | number
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
+    cvUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

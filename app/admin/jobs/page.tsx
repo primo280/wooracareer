@@ -1,5 +1,6 @@
+
+"use client"
+
 import { JobsPage } from "@/components/admin/JobsPage"
 
-export default function Jobs() {
-  return <JobsPage />
-}
+export default JobsPage

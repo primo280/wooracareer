@@ -101,22 +101,22 @@ export function AnalyticsPage() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">Excellent</div>
+            <div className="text-2xl font-bold text-teal-600">{analytics.overview.active_jobs > 0 ? 'Active' : 'Inactive'}</div>
             <p className="text-xs text-muted-foreground">
-              All systems operational
+              {analytics.overview.active_jobs} active jobs
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Growth Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">+12.5%</div>
+            <div className="text-2xl font-bold text-teal-700">{analytics.overview.total_applications}</div>
             <p className="text-xs text-muted-foreground">
-              Last 30 days
+              All time applications
             </p>
           </CardContent>
         </Card>
@@ -127,9 +127,11 @@ export function AnalyticsPage() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">85%</div>
+            <div className="text-2xl font-bold text-teal-500">
+              {analytics.overview.total_users > 0 ? ((analytics.overview.total_applications / analytics.overview.total_users) * 100).toFixed(1) : 0}%
+            </div>
             <p className="text-xs text-muted-foreground">
-              Active user rate
+              Applications per user
             </p>
           </CardContent>
         </Card>
@@ -140,7 +142,9 @@ export function AnalyticsPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">23%</div>
+            <div className="text-2xl font-bold text-teal-800">
+              {analytics.overview.total_jobs > 0 ? ((analytics.overview.total_applications / analytics.overview.total_jobs) * 100).toFixed(1) : 0}%
+            </div>
             <p className="text-xs text-muted-foreground">
               Applications per job
             </p>

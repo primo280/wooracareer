@@ -29,11 +29,12 @@ export default withAuth(
       authorized: ({ token, req }) => {
         const pathname = req.nextUrl.pathname
 
-        // Allow public access to sign-in page, sign-up page, and static assets
+        // Allow public access to sign-in page, sign-up page, job applications, and static assets
         if (
           !token &&
           pathname !== "/sign-in" &&
           pathname !== "/sign-up" &&
+          pathname !== "/api/applications" &&
           !pathname.startsWith("/_next") &&
           !pathname.startsWith("/api/auth") &&
           !pathname.startsWith("/public")
@@ -48,6 +49,11 @@ export default withAuth(
             console.log("Access denied to admin route:", pathname, "User role:", token?.role)
           }
           return hasAdminRole
+        }
+
+        // Allow unauthenticated access to job applications
+        if (pathname === "/api/applications") {
+          return true
         }
 
         // For other protected routes, just check if user is authenticated

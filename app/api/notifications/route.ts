@@ -20,12 +20,12 @@ export async function GET(request: NextRequest) {
         title,
         message,
         read,
-        created_at,
+        "createdAt" as created_at,
         job_id,
         application_id
       FROM notifications
-      WHERE user_id = ${session.user.email}
-      ORDER BY created_at DESC
+      WHERE "userId" = ${session.user.id}
+      ORDER BY "createdAt" DESC
       LIMIT 50
     `
 
@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
     const { type, title, message, job_id, application_id } = await request.json()
 
     const [notification] = await sql`
-      INSERT INTO notifications (user_id, type, title, message, job_id, application_id)
-      VALUES (${session.user.email}, ${type}, ${title}, ${message}, ${job_id || null}, ${application_id || null})
+      INSERT INTO notifications ("userId", type, title, message, job_id, application_id)
+      VALUES (${session.user.id}, ${type}, ${title}, ${message}, ${job_id || null}, ${application_id || null})
       RETURNING *
     `
 

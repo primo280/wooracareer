@@ -3,10 +3,10 @@ import { Job } from "@/types/job"
 export const formatSalary = (salaryMin?: number, salaryMax?: number): string => {
   if (!salaryMin && !salaryMax) return 'N/A'
   if (salaryMin && salaryMax) {
-    return `${salaryMin.toLocaleString()}€ - ${salaryMax.toLocaleString()}€`
+    return `${salaryMin.toLocaleString()}FCFA - ${salaryMax.toLocaleString()}FCFA`
   }
-  if (salaryMin) return `${salaryMin.toLocaleString()}€+`
-  return `${salaryMax?.toLocaleString()}€`
+  if (salaryMin) return `${salaryMin.toLocaleString()}FCFA+`
+  return `${salaryMax?.toLocaleString()}FCFA`
 }
 
 export const formatDate = (dateString: string): string => {

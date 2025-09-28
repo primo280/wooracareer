@@ -184,7 +184,7 @@ export function JobFilters({ filters, onFiltersChange, onReset }: JobFiltersProp
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="salaryMin">Salaire min (€)</Label>
+                <Label htmlFor="salaryMin">Salaire min (FCFA)</Label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
@@ -199,7 +199,7 @@ export function JobFilters({ filters, onFiltersChange, onReset }: JobFiltersProp
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="salaryMax">Salaire max (€)</Label>
+                <Label htmlFor="salaryMax">Salaire max (FCFA)</Label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input

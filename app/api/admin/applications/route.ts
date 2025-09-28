@@ -7,7 +7,13 @@ export async function GET(request: NextRequest) {
   try {
     const applications = await sql`
       SELECT
-        a.*,
+        a.id,
+        a."jobId",
+        a."candidateId",
+        a."coverLetter",
+        a.status,
+        a."appliedAt" as applied_at,
+        a."updatedAt",
         j.title as job_title,
         c."firstName" || ' ' || c."lastName" as candidate_name,
         u.email as candidate_email

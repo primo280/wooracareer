@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         "createdBy",
         "viewsCount"
       FROM jobs
-      WHERE id = ${jobId} AND status = 'active'
+      WHERE id = ${jobId} AND status = 'active' AND ("expiresAt" IS NULL OR "expiresAt" > NOW())
     `
 
     if (jobResult.length === 0) {

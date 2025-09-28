@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { NotificationsTable } from "@/components/admin/NotificationsTable"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bell, Users, MessageSquare, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Bell, Users, MessageSquare, AlertCircle, RefreshCw } from "lucide-react"
 
 interface AdminNotification {
   id: number
@@ -68,6 +69,10 @@ export function NotificationsPage() {
             Manage system notifications and alerts
           </p>
         </div>
+        <Button variant="outline" onClick={handleRefresh}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Actualiser
+        </Button>
       </div>
 
       {/* Stats Cards */}

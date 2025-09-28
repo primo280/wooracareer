@@ -106,11 +106,11 @@ export function JobsTable({ jobs, loading = false, onEditJob, onDeleteJob }: Job
 
   const formatSalary = (min: number, max: number) => {
     if (min && max) {
-      return `${min.toLocaleString()}€ - ${max.toLocaleString()}€`
+      return `${min.toLocaleString()}FCFA - ${max.toLocaleString()}FCFA`
     } else if (min) {
-      return `À partir de ${min.toLocaleString()}€`
+      return `À partir de ${min.toLocaleString()}FCFA`
     } else if (max) {
-      return `Jusqu'à ${max.toLocaleString()}€`
+      return `Jusqu'à ${max.toLocaleString()}FCFA`
     }
     return "Non spécifié"
   }

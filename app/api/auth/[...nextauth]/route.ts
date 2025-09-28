@@ -34,6 +34,11 @@ export const authOptions = {
             return null
           }
 
+          // Disable login for CANDIDATE role
+          if (user.role === 'CANDIDATE') {
+            return null
+          }
+
           return {
             id: user.id,
             email: user.email,

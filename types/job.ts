@@ -6,13 +6,25 @@ export interface Job {
   type: string
   salaryMin?: number
   salaryMax?: number
+  currency?: string
   description: string
   requirements?: string
+  benefits?: string
+  remoteWork?: boolean
+  experienceLevel?: string
+  contractDuration?: string
+  applicationUrl?: string
+  applicationEmail?: string
+  companyLogo?: string
+  companyWebsite?: string
   tags: string[]
-  createdAt: string
-  viewsCount: number
+  featured?: boolean
   status: string
+  createdAt: string
+  updatedAt?: string
   expiresAt?: string
+  createdBy?: string
+  viewsCount: number
 }
 
 export interface PaginationInfo {

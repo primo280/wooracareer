@@ -103,6 +103,7 @@ model Application {
   jobId       Int
   candidateId Int
   coverLetter String?
+  cvUrl       String?
   status      String   @default("pending") // 'pending', 'reviewed', 'accepted', 'rejected'
   appliedAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

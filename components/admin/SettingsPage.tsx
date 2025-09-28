@@ -78,7 +78,7 @@ export function SettingsPage() {
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">Enabled</div>
+            <div className="text-2xl font-bold text-teal-600">{settings[0]?.data.platform_status === 'active' ? 'Enabled' : 'Disabled'}</div>
           </CardContent>
         </Card>
 
@@ -88,7 +88,7 @@ export function SettingsPage() {
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">Connected</div>
+            <div className="text-2xl font-bold text-teal-700">Connected</div>
           </CardContent>
         </Card>
 
@@ -98,7 +98,7 @@ export function SettingsPage() {
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">Configured</div>
+            <div className="text-2xl font-bold text-teal-500">Configured</div>
           </CardContent>
         </Card>
       </div>

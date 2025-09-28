@@ -352,11 +352,11 @@ export default function ProfilePage() {
                       type="number"
                       value={profile.salary_expectation || ""}
                       onChange={(e) => setProfile({ ...profile, salary_expectation: Number.parseInt(e.target.value) })}
-                      placeholder="Salaire souhaité (€)"
+                      placeholder="Salaire souhaité (FCFA)"
                     />
                   ) : (
                     <span className="font-medium text-teal-600">
-                      {profile.salary_expectation?.toLocaleString()}€ / an
+                      {profile.salary_expectation?.toLocaleString()}FCFA / an
                     </span>
                   )}
                 </div>

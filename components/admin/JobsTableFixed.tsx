@@ -56,15 +56,15 @@ interface Job {
   company: string
   location: string
   type: string
-  salary_min: number
-  salary_max: number
+  salaryMin?: number
+  salaryMax?: number
   status: string
   applications: number
   views: number
-  posted_at: string
-  expires_at: string
+  createdAt: string
+  expiresAt?: string
   description?: string
-  company_logo?: string
+  companyLogo?: string
 }
 
 interface JobsTableProps {
@@ -108,11 +108,11 @@ export function JobsTable({ jobs, loading = false, onEditJob, onDeleteJob }: Job
 
   const formatSalary = (min: number, max: number) => {
     if (min && max) {
-      return `${min.toLocaleString()}€ - ${max.toLocaleString()}€`
+      return `${min.toLocaleString()}FCFA - ${max.toLocaleString()}FCFA`
     } else if (min) {
-      return `À partir de ${min.toLocaleString()}€`
+      return `À partir de ${min.toLocaleString()}FCFA`
     } else if (max) {
-      return `Jusqu'à ${max.toLocaleString()}€`
+      return `Jusqu'à ${max.toLocaleString()}FCFA`
     }
     return "Non spécifié"
   }
@@ -181,7 +181,7 @@ export function JobsTable({ jobs, loading = false, onEditJob, onDeleteJob }: Job
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={job.company_logo} />
+                        <AvatarImage src={job.companyLogo} />
                         <AvatarFallback>
                           {job.company.charAt(0).toUpperCase()}
                         </AvatarFallback>
@@ -190,7 +190,7 @@ export function JobsTable({ jobs, loading = false, onEditJob, onDeleteJob }: Job
                         <div className="font-medium text-gray-900">{job.title}</div>
                         <div className="text-sm text-gray-500 flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {new Date(job.posted_at).toLocaleDateString("fr-FR")}
+                          {new Date(job.createdAt).toLocaleDateString("fr-FR")}
                         </div>
                       </div>
                     </div>
@@ -210,7 +210,7 @@ export function JobsTable({ jobs, loading = false, onEditJob, onDeleteJob }: Job
                   <TableCell>
                     <div className="flex items-center gap-1 text-gray-600">
                       <DollarSign className="w-3 h-3" />
-                      {formatSalary(job.salary_min, job.salary_max)}
+                      {formatSalary(job.salaryMin || 0, job.salaryMax || 0)}
                     </div>
                   </TableCell>
                   <TableCell>{getStatusBadge(job.status)}</TableCell>
@@ -227,7 +227,7 @@ export function JobsTable({ jobs, loading = false, onEditJob, onDeleteJob }: Job
                     </div>
                   </TableCell>
                   <TableCell className="text-center text-sm text-gray-500">
-                    {new Date(job.expires_at).toLocaleDateString("fr-FR")}
+                    {job.expiresAt ? new Date(job.expiresAt).toLocaleDateString("fr-FR") : "N/A"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

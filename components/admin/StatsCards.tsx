@@ -69,7 +69,7 @@ export function StatsCards({ stats, loading = false }: StatsCardsProps) {
     },
     {
       title: "Salaire Moyen",
-      value: `${stats.avgSalary.toLocaleString()}€`,
+      value: `${stats.avgSalary.toLocaleString()}FCFA`,
       icon: DollarSign,
       color: "text-emerald-600",
       bgColor: "bg-emerald-50",

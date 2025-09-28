@@ -518,7 +518,7 @@ export default function CandidateDashboard() {
                           <span>{job.type}</span>
                           <span>•</span>
                           <span>
-                            {job.salary_min.toLocaleString()}€ - {job.salary_max.toLocaleString()}€
+                            {job.salary_min.toLocaleString()}FCFA - {job.salary_max.toLocaleString()}FCFA
                           </span>
                         </div>
                         <p className="text-sm text-gray-500 mt-2">

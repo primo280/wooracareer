@@ -77,7 +77,7 @@ export async function getJobs(filters: JobFilters = {}, limit = 20, offset = 0):
       "createdBy",
       "viewsCount"
     FROM jobs
-    WHERE status = 'active'
+    WHERE status = 'active' AND ("expiresAt" IS NULL OR "expiresAt" > NOW())
   `
 
   const params: any[] = []
@@ -135,7 +135,7 @@ export async function getJobs(filters: JobFilters = {}, limit = 20, offset = 0):
 }
 
 export async function getJobsCount(filters: JobFilters = {}): Promise<number> {
-  let query = `SELECT COUNT(*) as count FROM jobs WHERE status = 'active'`
+  let query = `SELECT COUNT(*) as count FROM jobs WHERE status = 'active' AND ("expiresAt" IS NULL OR "expiresAt" > NOW())`
 
   const params: any[] = []
   let paramIndex = 1
@@ -210,7 +210,7 @@ export async function getJobById(id: number): Promise<Job | null> {
       "createdBy",
       "viewsCount"
     FROM jobs
-    WHERE id = ${id} AND status = 'active'
+    WHERE id = ${id} AND status = 'active' AND ("expiresAt" IS NULL OR "expiresAt" > NOW())
   `
   return (result[0] as Job) || null
 }

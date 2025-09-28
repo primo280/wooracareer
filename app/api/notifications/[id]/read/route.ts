@@ -18,8 +18,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     await sql`
       UPDATE notifications
-      SET read = true, updated_at = NOW()
-      WHERE id = ${notificationId} AND user_id = ${session.user.email}
+      SET read = true, "updatedAt" = NOW()
+      WHERE id = ${notificationId} AND "userId" = ${session.user.id}
     `
 
     return NextResponse.json({ success: true })

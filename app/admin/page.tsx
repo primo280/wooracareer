@@ -61,13 +61,17 @@ interface Job {
   company: string
   location: string
   type: string
-  salary_min: number
-  salary_max: number
+  salaryMin?: number
+  salaryMax?: number
   status: string
   applications: number
   views: number
-  posted_at: string
-  expires_at: string
+  createdAt: string
+  expiresAt?: string
+  description?: string
+  requirements?: string
+  benefits?: string
+  tags?: string[]
 }
 
 interface Application {
@@ -90,6 +94,15 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [showJobForm, setShowJobForm] = useState(false)
   const [editingJob, setEditingJob] = useState<Job | null>(null)
+  const [stats, setStats] = useState({
+    total_jobs: 0,
+    active_jobs: 0,
+    total_applications: 0,
+    pending_applications: 0,
+    total_views: 0,
+  })
+  const [recentJobs, setRecentJobs] = useState<Job[]>([])
+  const [recentApplications, setRecentApplications] = useState<Application[]>([])
 
   // Job form state
   const [jobForm, setJobForm] = useState({
@@ -97,13 +110,15 @@ export default function AdminDashboard() {
     company: "",
     location: "",
     type: "CDI",
-    salary_min: "",
-    salary_max: "",
+    salaryMin: "",
+    salaryMax: "",
     description: "",
     requirements: "",
     benefits: "",
     skills: "",
-    expires_at: "",
+    companyLogo: "",
+    companyWebsite: "",
+    expiresAt: "",
   })
 
   // Check if user is authenticated and has admin role
@@ -121,29 +136,59 @@ export default function AdminDashboard() {
     }
   }, [session, status, router])
 
+  const fetchJobs = async () => {
+    try {
+      const jobsResponse = await fetch("/api/admin/jobs")
+      const jobsData = await jobsResponse.json()
+      if (jobsData.jobs) {
+        setJobs(jobsData.jobs)
+      }
+    } catch (error) {
+      console.error("Error fetching jobs:", error)
+    }
+  }
+
+  const fetchApplications = async () => {
+    try {
+      const applicationsResponse = await fetch("/api/admin/applications")
+      const applicationsData = await applicationsResponse.json()
+      if (applicationsData.applications) {
+        setApplications(applicationsData.applications)
+      }
+    } catch (error) {
+      console.error("Error fetching applications:", error)
+    }
+  }
+
+  const fetchStats = async () => {
+    try {
+      const analyticsResponse = await fetch("/api/admin/analytics")
+      const analyticsData = await analyticsResponse.json()
+      if (analyticsData.success) {
+        if (analyticsData.overview) {
+          setStats(analyticsData.overview)
+        }
+        if (analyticsData.recentJobs) {
+          setRecentJobs(analyticsData.recentJobs)
+        }
+        if (analyticsData.recentApplications) {
+          setRecentApplications(analyticsData.recentApplications)
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching analytics:", error)
+    }
+  }
+
   // Fetch data effect
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        // Fetch jobs
-        const jobsResponse = await fetch("/api/admin/jobs")
-        const jobsData = await jobsResponse.json()
-        if (jobsData.jobs) {
-          setJobs(jobsData.jobs)
-        }
-
-        // Fetch applications
-        const applicationsResponse = await fetch("/api/admin/applications")
-        const applicationsData = await applicationsResponse.json()
-        if (applicationsData.applications) {
-          setApplications(applicationsData.applications)
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error)
-        // Keep mock data as fallback
-      } finally {
-        setLoading(false)
-      }
+      await Promise.all([
+        fetchJobs(),
+        fetchApplications(),
+        fetchStats()
+      ])
+      setLoading(false)
     }
 
     fetchData()
@@ -178,13 +223,15 @@ export default function AdminDashboard() {
       company: "",
       location: "",
       type: "CDI",
-      salary_min: "",
-      salary_max: "",
+      salaryMin: "",
+      salaryMax: "",
       description: "",
       requirements: "",
       benefits: "",
       skills: "",
-      expires_at: "",
+      companyLogo: "",
+      companyWebsite: "",
+      expiresAt: "",
     })
     setShowJobForm(true)
   }
@@ -196,13 +243,15 @@ export default function AdminDashboard() {
       company: job.company,
       location: job.location,
       type: job.type,
-      salary_min: job.salary_min.toString(),
-      salary_max: job.salary_max.toString(),
-      description: "",
-      requirements: "",
-      benefits: "",
-      skills: "",
-      expires_at: job.expires_at,
+      salaryMin: job.salaryMin?.toString() || "",
+      salaryMax: job.salaryMax?.toString() || "",
+      description: job.description || "",
+      requirements: job.requirements || "",
+      benefits: job.benefits || "",
+      skills: job.tags?.join(", ") || "",
+      companyLogo: "",
+      companyWebsite: "",
+      expiresAt: job.expiresAt ? new Date(job.expiresAt).toISOString().split('T')[0] : "",
     })
     setShowJobForm(true)
   }
@@ -210,12 +259,31 @@ export default function AdminDashboard() {
   const handleSaveJob = async () => {
     try {
       // Client-side validation with Zod
-      const jobData = {
+      const jobData: any = {
         ...jobForm,
-        salaryMin: Number.parseInt(jobForm.salary_min),
-        salaryMax: Number.parseInt(jobForm.salary_max),
-        tags: jobForm.skills.split(",").map((s) => s.trim()),
-        expiresAt: jobForm.expires_at,
+        tags: jobForm.skills.split(",").map((s) => s.trim()).filter(s => s.trim()),
+      }
+
+      // Handle salary fields
+      if (jobForm.salaryMin.trim()) {
+        const salaryMin = Number.parseInt(jobForm.salaryMin)
+        if (!isNaN(salaryMin) && salaryMin >= 0) {
+          jobData.salaryMin = salaryMin
+        }
+      }
+      if (jobForm.salaryMax.trim()) {
+        const salaryMax = Number.parseInt(jobForm.salaryMax)
+        if (!isNaN(salaryMax) && salaryMax >= 0) {
+          jobData.salaryMax = salaryMax
+        }
+      }
+
+      // Handle expiresAt
+      if (jobForm.expiresAt.trim()) {
+        const expiresDate = new Date(jobForm.expiresAt)
+        if (!isNaN(expiresDate.getTime())) {
+          jobData.expiresAt = expiresDate.toISOString()
+        }
       }
 
       const validationResult = createJobSchema.safeParse(jobData)
@@ -230,14 +298,16 @@ export default function AdminDashboard() {
       }
 
       const method = editingJob ? "PUT" : "POST"
-      const url = editingJob ? `/api/admin/jobs/${editingJob.id}` : "/api/admin/jobs"
+      const url = "/api/admin/jobs"
+
+      const requestData = editingJob ? { id: editingJob.id, ...jobData } : jobData
 
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(jobData),
+        body: JSON.stringify(requestData),
       })
 
       const data = await response.json()
@@ -248,8 +318,8 @@ export default function AdminDashboard() {
           title: "Succès",
           description: editingJob ? "Offre mise à jour avec succès." : "Offre créée avec succès.",
         })
-        // Refresh jobs list
-        window.location.reload()
+        // Refresh data
+        await Promise.all([fetchJobs(), fetchStats()])
       } else {
         toast({
           title: "Erreur",
@@ -273,20 +343,32 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(`/api/admin/jobs/${jobId}`, {
+      const response = await fetch(`/api/admin/jobs?ids=${jobId}`, {
         method: "DELETE",
       })
 
       const data = await response.json()
 
       if (data.success) {
-        setJobs(jobs.filter((job) => job.id !== jobId))
+        toast({
+          title: "Succès",
+          description: "Offre supprimée avec succès.",
+        })
+        await Promise.all([fetchJobs(), fetchStats()])
       } else {
-        alert(data.error || "Erreur lors de la suppression")
+        toast({
+          title: "Erreur",
+          description: data.error || "Erreur lors de la suppression",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error deleting job:", error)
-      alert("Erreur lors de la suppression")
+      toast({
+        title: "Erreur",
+        description: "Erreur lors de la suppression de l'offre.",
+        variant: "destructive",
+      })
     }
   }
 
@@ -320,13 +402,6 @@ export default function AdminDashboard() {
     const matchesStatus = statusFilter === "all" || job.status === statusFilter
     return matchesSearch && matchesStatus
   })
-
-  const stats = {
-    totalJobs: jobs.length,
-    activeJobs: jobs.filter((job) => job.status === "active").length,
-    totalApplications: applications.length,
-    pendingApplications: applications.filter((app) => app.status === "pending").length,
-  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -370,67 +445,166 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Tableau de bord Admin</h1>
-              <p className="text-gray-600">Gérez vos offres d'emploi et candidatures</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Tableau de bord Admin</h1>
+              <p className="text-sm sm:text-base text-gray-600">Gérez vos offres d'emploi et candidatures</p>
             </div>
-            <Button onClick={handleCreateJob} className="bg-teal-600 hover:bg-teal-700">
+
+            {/*
+            
+            <Button onClick={handleCreateJob} className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Nouvelle offre
             </Button>
+            */}
+            
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Offres</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.totalJobs}</p>
+            <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600">Total Offres</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900">{stats.total_jobs}</p>
+                  </div>
+                  <Briefcase className="w-6 h-6 sm:w-8 sm:h-8 text-teal-600" />
                 </div>
-                <Briefcase className="w-8 h-8 text-teal-600" />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600">Offres Actives</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-teal-600">{stats.active_jobs}</p>
+                  </div>
+                  <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-teal-600" />
+                </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600">Total Candidatures</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900">{stats.total_applications}</p>
+                  </div>
+                  <Users className="w-6 h-6 sm:w-8 sm:h-8 text-teal-600" />
+                </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600">En Attente</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-yellow-600">{stats.pending_applications}</p>
+                  </div>
+                  <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600" />
+                </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600">Total Vues</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-blue-600">{stats.total_views}</p>
+                  </div>
+                  <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+                </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 sm:mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg sm:text-xl">Offres récentes</CardTitle>
+              <CardDescription className="text-sm sm:text-base">Les 5 dernières offres ajoutées</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 sm:p-6">
+              <div className="space-y-4">
+                {recentJobs.length > 0 ? (
+                  recentJobs.map((job) => (
+                    <div key={job.id} className="flex items-center justify-between p-4 border-b last:border-b-0">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm sm:text-base truncate" title={job.title}>
+                          {job.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-gray-500 truncate" title={job.company}>
+                          {job.company}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(job.createdAt).toLocaleDateString("fr-FR")}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {getStatusBadge(job.status)}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(`/jobs/${job.id}`, "_blank")}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Briefcase className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Aucune offre récente</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Offres Actives</p>
-                  <p className="text-3xl font-bold text-green-600">{stats.activeJobs}</p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Candidatures</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.totalApplications}</p>
-                </div>
-                <Users className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">En Attente</p>
-                  <p className="text-3xl font-bold text-yellow-600">{stats.pendingApplications}</p>
-                </div>
-                <Clock className="w-8 h-8 text-yellow-600" />
+            <CardHeader>
+              <CardTitle className="text-lg sm:text-xl">Candidatures récentes</CardTitle>
+              <CardDescription className="text-sm sm:text-base">Les 5 dernières candidatures reçues</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 sm:p-6">
+              <div className="space-y-4">
+                {recentApplications.length > 0 ? (
+                  recentApplications.map((application) => (
+                    <div key={application.id} className="flex items-center justify-between p-4 border-b last:border-b-0">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm sm:text-base truncate" title={application.job_title}>
+                          {application.job_title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-gray-500 truncate" title={application.candidate_name}>
+                          {application.candidate_name}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(application.applied_at).toLocaleDateString("fr-FR")}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {getApplicationStatusBadge(application.status)}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Aucune candidature récente</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -477,61 +651,77 @@ export default function AdminDashboard() {
             {/* Jobs Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Offres d'emploi ({filteredJobs.length})</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Offres d'emploi ({filteredJobs.length})</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Poste</TableHead>
-                      <TableHead>Entreprise</TableHead>
-                      <TableHead>Localisation</TableHead>
-                      <TableHead>Salaire</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Candidatures</TableHead>
-                      <TableHead>Vues</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredJobs.map((job) => (
-                      <TableRow key={job.id}>
-                        <TableCell className="font-medium">{job.title}</TableCell>
-                        <TableCell>{job.company}</TableCell>
-                        <TableCell>{job.location}</TableCell>
-                        <TableCell>
-                          {job.salary_min ? `${job.salary_min.toLocaleString()}€` : '0€'} - {job.salary_max ? `${job.salary_max.toLocaleString()}€` : '0€'}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(job.status)}</TableCell>
-                        <TableCell>{job.applications}</TableCell>
-                        <TableCell>{job.views}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreHorizontal className="w-4 h-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => window.open(`/jobs/${job.id}`, "_blank")}>
-                                <Eye className="w-4 h-4 mr-2" />
-                                Voir
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleEditJob(job)}>
-                                <Edit className="w-4 h-4 mr-2" />
-                                Modifier
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDeleteJob(job.id)} className="text-red-600">
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                Supprimer
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+              <CardContent className="p-0 sm:p-6">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[150px]">Poste</TableHead>
+                        <TableHead className="min-w-[120px]">Entreprise</TableHead>
+                        <TableHead className="min-w-[100px]">Localisation</TableHead>
+                        <TableHead className="min-w-[120px]">Salaire</TableHead>
+                        <TableHead className="min-w-[80px]">Statut</TableHead>
+                        <TableHead className="min-w-[80px]">Candidatures</TableHead>
+                        <TableHead className="min-w-[60px]">Vues</TableHead>
+                        <TableHead className="min-w-[80px]">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredJobs.map((job) => (
+                        <TableRow key={job.id}>
+                          <TableCell className="font-medium">
+                            <div className="max-w-[150px] truncate" title={job.title}>
+                              {job.title}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-[120px] truncate" title={job.company}>
+                              {job.company}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-[100px] truncate" title={job.location}>
+                              {job.location}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm">
+                              {job.salaryMin ? `${job.salaryMin.toLocaleString()}FCFA` : '0FCFA'} - {job.salaryMax ? `${job.salaryMax.toLocaleString()}FCFA` : '0FCFA'}
+                            </div>
+                          </TableCell>
+                          <TableCell>{getStatusBadge(job.status)}</TableCell>
+                          <TableCell className="text-center">{job.applications}</TableCell>
+                          <TableCell className="text-center">{job.views}</TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreHorizontal className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => window.open(`/jobs/${job.id}`, "_blank")}>
+                                  <Eye className="w-4 h-4 mr-2" />
+                                  Voir
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleEditJob(job)}>
+                                  <Edit className="w-4 h-4 mr-2" />
+                                  Modifier
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDeleteJob(job.id)} className="text-red-600">
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Supprimer
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -539,73 +729,83 @@ export default function AdminDashboard() {
           <TabsContent value="applications" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Candidatures récentes</CardTitle>
-                <CardDescription>Gérez les candidatures reçues pour vos offres</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Candidatures récentes</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Gérez les candidatures reçues pour vos offres</CardDescription>
               </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Candidat</TableHead>
-                      <TableHead>Poste</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {applications.map((application) => (
-                      <TableRow key={application.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{application.candidate_name}</div>
-                            <div className="text-sm text-gray-500">{application.candidate_email}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{application.job_title}</TableCell>
-                        <TableCell>{new Date(application.applied_at).toLocaleDateString("fr-FR")}</TableCell>
-                        <TableCell>{getApplicationStatusBadge(application.status)}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreHorizontal className="w-4 h-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => handleUpdateApplicationStatus(application.id, "reviewing")}
-                              >
-                                <AlertCircle className="w-4 h-4 mr-2" />
-                                Marquer en cours
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleUpdateApplicationStatus(application.id, "interview")}
-                              >
-                                <Users className="w-4 h-4 mr-2" />
-                                Programmer entretien
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleUpdateApplicationStatus(application.id, "accepted")}
-                                className="text-green-600"
-                              >
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                Accepter
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleUpdateApplicationStatus(application.id, "rejected")}
-                                className="text-red-600"
-                              >
-                                <XCircle className="w-4 h-4 mr-2" />
-                                Refuser
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+              <CardContent className="p-0 sm:p-6">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[150px]">Candidat</TableHead>
+                        <TableHead className="min-w-[120px]">Poste</TableHead>
+                        <TableHead className="min-w-[100px]">Date</TableHead>
+                        <TableHead className="min-w-[100px]">Statut</TableHead>
+                        <TableHead className="min-w-[80px]">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {applications.map((application) => (
+                        <TableRow key={application.id}>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium text-sm sm:text-base">{application.candidate_name}</div>
+                              <div className="text-xs sm:text-sm text-gray-500 truncate max-w-[140px]" title={application.candidate_email}>
+                                {application.candidate_email}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-[120px] truncate" title={application.job_title}>
+                              {application.job_title}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {new Date(application.applied_at).toLocaleDateString("fr-FR")}
+                          </TableCell>
+                          <TableCell>{getApplicationStatusBadge(application.status)}</TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreHorizontal className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => handleUpdateApplicationStatus(application.id, "reviewing")}
+                                >
+                                  <AlertCircle className="w-4 h-4 mr-2" />
+                                  Marquer en cours
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleUpdateApplicationStatus(application.id, "interview")}
+                                >
+                                  <Users className="w-4 h-4 mr-2" />
+                                  Programmer entretien
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleUpdateApplicationStatus(application.id, "accepted")}
+                                  className="text-green-600"
+                                >
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Accepter
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleUpdateApplicationStatus(application.id, "rejected")}
+                                  className="text-red-600"
+                                >
+                                  <XCircle className="w-4 h-4 mr-2" />
+                                  Refuser
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -614,13 +814,13 @@ export default function AdminDashboard() {
 
       {/* Job Form Dialog */}
       <Dialog open={showJobForm} onOpenChange={setShowJobForm}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingJob ? "Modifier l'offre" : "Créer une nouvelle offre"}</DialogTitle>
-            <DialogDescription>Remplissez les informations de l'offre d'emploi</DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">{editingJob ? "Modifier l'offre" : "Créer une nouvelle offre"}</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">Remplissez les informations de l'offre d'emploi</DialogDescription>
           </DialogHeader>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="title">Titre du poste</Label>
@@ -666,32 +866,32 @@ export default function AdminDashboard() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="salary_min">Salaire min (€)</Label>
+                  <Label htmlFor="salaryMin">Salaire min (FCFA)</Label>
                   <Input
-                    id="salary_min"
+                    id="salaryMin"
                     type="number"
-                    value={jobForm.salary_min}
-                    onChange={(e) => setJobForm({ ...jobForm, salary_min: e.target.value })}
+                    value={jobForm.salaryMin}
+                    onChange={(e) => setJobForm({ ...jobForm, salaryMin: e.target.value })}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="salary_max">Salaire max (€)</Label>
+                  <Label htmlFor="salaryMax">Salaire max (FCFA)</Label>
                   <Input
-                    id="salary_max"
+                    id="salaryMax"
                     type="number"
-                    value={jobForm.salary_max}
-                    onChange={(e) => setJobForm({ ...jobForm, salary_max: e.target.value })}
+                    value={jobForm.salaryMax}
+                    onChange={(e) => setJobForm({ ...jobForm, salaryMax: e.target.value })}
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="expires_at">Date d'expiration</Label>
+                <Label htmlFor="expiresAt">Date d'expiration</Label>
                 <Input
-                  id="expires_at"
+                  id="expiresAt"
                   type="date"
-                  value={jobForm.expires_at}
-                  onChange={(e) => setJobForm({ ...jobForm, expires_at: e.target.value })}
+                  value={jobForm.expiresAt}
+                  onChange={(e) => setJobForm({ ...jobForm, expiresAt: e.target.value })}
                 />
               </div>
             </div>
@@ -736,14 +936,36 @@ export default function AdminDashboard() {
                   placeholder="React, Node.js, TypeScript..."
                 />
               </div>
+
+              <div>
+                <Label htmlFor="companyLogo">Logo de l'entreprise (URL)</Label>
+                <Input
+                  id="companyLogo"
+                  type="url"
+                  value={jobForm.companyLogo}
+                  onChange={(e) => setJobForm({ ...jobForm, companyLogo: e.target.value })}
+                  placeholder="https://example.com/logo.png"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="companyWebsite">Site web de l'entreprise (URL)</Label>
+                <Input
+                  id="companyWebsite"
+                  type="url"
+                  value={jobForm.companyWebsite}
+                  onChange={(e) => setJobForm({ ...jobForm, companyWebsite: e.target.value })}
+                  placeholder="https://example.com"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-6">
-            <Button variant="outline" onClick={() => setShowJobForm(false)}>
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6">
+            <Button variant="outline" onClick={() => setShowJobForm(false)} className="w-full sm:w-auto">
               Annuler
             </Button>
-            <Button onClick={handleSaveJob} className="bg-teal-600 hover:bg-teal-700">
+            <Button onClick={handleSaveJob} className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto">
               {editingJob ? "Mettre à jour" : "Créer l'offre"}
             </Button>
           </div>

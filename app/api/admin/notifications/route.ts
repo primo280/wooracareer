@@ -53,3 +53,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })
   }
 }
+
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { id, read } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID requis" },
+        { status: 400 }
+      )
+    }
+
+    await sql`
+      UPDATE notifications
+      SET read = ${read}, "updatedAt" = NOW()
+      WHERE id = ${id}
+    `
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Error updating notification:", error)
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })
+  }
+}

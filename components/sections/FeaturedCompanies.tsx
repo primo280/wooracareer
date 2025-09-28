@@ -26,7 +26,7 @@ export default function FeaturedCompanies() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {companies.map((company, index) => (
-            <Card key={index} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+            <Card key={index} className="hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-0 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-6 text-center">
                 <div className="text-4xl mb-4">{company.logo}</div>
                 <h4 className="text-lg font-semibold text-gray-900 mb-2">{company.name}</h4>

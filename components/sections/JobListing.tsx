@@ -238,16 +238,6 @@ export default function JobListing({ filters }: JobListingProps) {
   }
 
   const handleApplyClick = (job: Job) => {
-    if (status === "loading") {
-      // Still loading
-      return
-    }
-
-    if (!session?.user) {
-      router.push("/sign-in")
-      return
-    }
-
     setSelectedJob(job)
     setShowApplication(true)
   }

@@ -51,7 +51,7 @@ export default function HomePage() {
           className="rounded-full w-14 h-14 bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 p-0"
         >
           <svg
-            className="w-6 h-6"
+            className="w-8 h-8"
             fill="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"

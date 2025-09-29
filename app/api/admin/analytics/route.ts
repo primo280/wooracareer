@@ -49,6 +49,51 @@ export async function GET() {
       LIMIT 5
     `
 
+    // Get jobs by status
+    const jobsByStatusResult = await sql`
+      SELECT status, COUNT(*) as count
+      FROM jobs
+      GROUP BY status
+      ORDER BY count DESC
+    `
+
+    // Get applications by status
+    const applicationsByStatusResult = await sql`
+      SELECT status, COUNT(*) as count
+      FROM applications
+      GROUP BY status
+      ORDER BY count DESC
+    `
+
+    // Get recent activity (jobs and applications from last 30 days)
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+    const recentActivityResult = await sql`
+      SELECT
+        'job' as type,
+        title,
+        "createdAt" as date
+      FROM jobs
+      WHERE "createdAt" >= ${thirtyDaysAgo.toISOString()}
+      UNION ALL
+      SELECT
+        'application' as type,
+        j.title,
+        a."appliedAt" as date
+      FROM applications a
+      JOIN jobs j ON a."jobId" = j.id
+      WHERE a."appliedAt" >= ${thirtyDaysAgo.toISOString()}
+      ORDER BY date DESC
+      LIMIT 20
+    `
+
+    // Get total users and candidates (placeholder values for now)
+    const totalUsers = 0
+    const totalCandidates = 0
+    const totalNotifications = 0
+    const unreadNotifications = 0
+
     return NextResponse.json({
       success: true,
       overview: {
@@ -57,7 +102,14 @@ export async function GET() {
         total_applications: totalApplications,
         pending_applications: pendingApplications,
         total_views: totalViews,
+        total_users: totalUsers,
+        total_candidates: totalCandidates,
+        total_notifications: totalNotifications,
+        unread_notifications: unreadNotifications,
       },
+      jobsByStatus: jobsByStatusResult,
+      applicationsByStatus: applicationsByStatusResult,
+      recentActivity: recentActivityResult,
       recentJobs: recentJobsResult,
       recentApplications: recentApplicationsResult,
     })

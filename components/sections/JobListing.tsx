@@ -53,9 +53,14 @@ export default function JobListing({ filters }: JobListingProps) {
 
   // Get job image from database or fallback
   const getJobImage = (job: Job) => {
+    // Use job image if available
+    if (job.jobImage && job.jobImage.trim() !== '') {
+      return `url(${job.jobImage})`
+    }
+
     // Use company logo from database if available
     if (job.companyLogo && job.companyLogo.trim() !== '') {
-      return job.companyLogo
+      return `url(${job.companyLogo})`
     }
 
     // Generate a colored background based on job ID for consistent but varied appearance
@@ -105,8 +110,16 @@ export default function JobListing({ filters }: JobListingProps) {
       if (filters.salaryFilter !== "all") params.append("salary_min", filters.salaryFilter)
       params.append("page", page.toString())
       params.append("limit", "10")
+      
 
-      const response = await fetch(`/api/jobs?${params.toString()}`)
+      const response = await fetch(`/api/jobs?${params.toString()}&_=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      })
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`)
       }
@@ -174,6 +187,30 @@ export default function JobListing({ filters }: JobListingProps) {
   useEffect(() => {
     fetchJobs(1)
   }, []) // Only run on mount
+
+  // Auto-refresh jobs every 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchJobs(1)
+    }, 2 * 60 * 1000) // 2 minutes
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Refetch jobs when page becomes visible (user returns to tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchJobs(1)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
 
   // Debounced effect for filter changes
   useEffect(() => {
@@ -356,11 +393,41 @@ export default function JobListing({ filters }: JobListingProps) {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Job Image */}
-                <div
-                  className="relative aspect-[16/9] overflow-hidden group-hover:scale-105 transition-transform duration-300"
-                  style={{ background: getJobImage(job) }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                <div className="relative aspect-[16/9] overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                  {job.jobImage && job.jobImage.trim() !== '' ? (
+                    <>
+                      <img
+                        src={job.jobImage}
+                        alt={`${job.title} - ${job.company}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const parent = e.currentTarget.parentElement!;
+                          parent.innerHTML = `<div class="w-full h-full" style="background: ${getJobImage(job)}"></div>`;
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    </>
+                  ) : job.companyLogo && job.companyLogo.trim() !== '' ? (
+                    <>
+                      <img
+                        src={job.companyLogo}
+                        alt={`${job.company} logo`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const parent = e.currentTarget.parentElement!;
+                          parent.innerHTML = `<div class="w-full h-full" style="background: ${getJobImage(job)}"></div>`;
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    </>
+                  ) : (
+                    <div
+                      className="w-full h-full"
+                      style={{ background: getJobImage(job) }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    </div>
+                  )}
                   <div className="absolute top-3 right-3">
                     <Badge className={`bg-gradient-to-r ${getTypeGradient(job.type)} text-white border-0 shadow-lg`}>
                       {job.type}

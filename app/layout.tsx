@@ -7,6 +7,8 @@ import { ThemeProvider } from "next-themes"
 import { Suspense } from "react"
 import { Providers } from "./providers"
 import { Toaster } from "sonner"
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -31,6 +33,7 @@ export default function RootLayout({
           </Suspense>
         </Providers>
         <Toaster />
+        <ToastContainer />
         <Analytics />
       </body>
     </html>

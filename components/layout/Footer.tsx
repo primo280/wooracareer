@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation"
 import { Building, Facebook, Instagram, MessageCircle, Mail, Phone, MapPin, ArrowUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
+import WooraLogo from "@/public/logo/woora.jpg"
 
 export default function Footer() {
   const router = useRouter()
@@ -26,11 +28,21 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-2 animate-in fade-in slide-in-from-bottom duration-700">
             <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-emerald-400 rounded-xl blur-lg opacity-50 animate-pulse"></div>
-                <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Building className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r  rounded-xl blur-lg opacity-50 animate-pulse"></div>
+                <div className="relative  sm:w-12 sm:h-12 bg-gradient-to-r  rounded-xl flex items-center justify-center shadow-lg">
+                  
+                    <Image
+                              className=" rounded-[20px]  sm:w-6 sm:h-6 text-white "
+                              src={WooraLogo}
+                              alt="wooraLogo"
+                              height={50}
+                              width={50}
+                              
+                              />
+                            </div>
                 </div>
-              </div>
+
+                
               <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
                 Wooracareer
               </h3>
@@ -47,7 +59,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center space-x-2 sm:space-x-3 text-gray-300 hover:text-teal-400 transition-colors group">
                 <Phone className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform flex-shrink-0" />
-                <span className="text-sm sm:text-base">+229 XX XX XX XX</span>
+                <span className="text-sm sm:text-base">+229 0148152525</span>
               </div>
               <div className="flex items-center space-x-2 sm:space-x-3 text-gray-300 hover:text-teal-400 transition-colors group">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform flex-shrink-0" />

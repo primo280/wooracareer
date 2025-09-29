@@ -37,6 +37,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         "applicationEmail",
         "companyLogo",
         "companyWebsite",
+        "jobImage",
+        "jobPdf",
         tags,
         featured,
         status,

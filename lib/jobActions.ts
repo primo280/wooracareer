@@ -1,4 +1,5 @@
 import { Job } from "@/types/job"
+import { toast } from 'react-toastify'
 
 export const handleApply = async (
   job: Job,
@@ -13,7 +14,7 @@ export const handleApply = async (
   resetForm: () => void
 ) => {
   if (!applicantName.trim() || !applicantEmail.trim()) {
-    alert("Veuillez remplir votre nom et email")
+    toast.error("Veuillez remplir votre nom et email")
     return
   }
 
@@ -35,15 +36,16 @@ export const handleApply = async (
     const data = await response.json()
 
     if (data.success) {
+      toast.success("Votre candidature a été envoyée avec succès !")
       setApplied(true)
       setShowApplication(false)
       resetForm()
     } else {
-      alert(data.error || "Erreur lors de l'envoi de la candidature")
+      toast.error(data.error || "Erreur lors de l'envoi de la candidature")
     }
   } catch (error) {
-    console.error("Error applying:", error)
-    alert("Erreur lors de l'envoi de la candidature")
+    console.error("Erreur lors de la candidature :", error)
+    toast.error("Erreur lors de l'envoi de la candidature")
   } finally {
     setApplying(false)
   }
@@ -85,7 +87,7 @@ export const handleShare = async (platform: string, job: Job) => {
       window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`)
     }
   } catch (error) {
-    console.error('Error sharing:', error)
+    console.error('Erreur lors du partage :', error)
     // Fallback for clipboard API not supported
     const notification = document.createElement('div')
     notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-right'

@@ -31,6 +31,8 @@ interface Job {
   requirements?: string
   benefits?: string
   tags?: string[]
+  jobImage?: string
+  jobPdf?: string
 }
 
 export function JobsPage() {
@@ -50,6 +52,8 @@ export function JobsPage() {
     benefits: "",
     skills: "",
     expiresAt: "",
+    jobImage: "",
+    jobPdf: "",
   })
 
   useEffect(() => {
@@ -84,6 +88,8 @@ export function JobsPage() {
       benefits: "",
       skills: "",
       expiresAt: "",
+      jobImage: "",
+      jobPdf: "",
     })
     setShowJobForm(true)
   }
@@ -99,6 +105,8 @@ export function JobsPage() {
         requirements: jobForm.requirements || undefined,
         benefits: jobForm.benefits || undefined,
         tags: jobForm.skills.split(",").map((s) => s.trim()).filter(s => s.trim()),
+        jobImage: jobForm.jobImage || undefined,
+        jobPdf: jobForm.jobPdf || undefined,
       }
 
       // Only add salary if provided and valid
@@ -185,6 +193,8 @@ export function JobsPage() {
       benefits: job.benefits || "",
       skills: job.tags?.join(", ") || "",
       expiresAt: job.expiresAt ? new Date(job.expiresAt).toISOString().split('T')[0] : "",
+      jobImage: job.jobImage || "",
+      jobPdf: job.jobPdf || "",
     })
     setShowJobForm(true)
   }
@@ -224,18 +234,57 @@ export function JobsPage() {
     }
   }
 
+  const handleFileUpload = async (file: File, type: 'image' | 'pdf') => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        if (type === 'image') {
+          setJobForm({ ...jobForm, jobImage: data.url })
+        } else {
+          setJobForm({ ...jobForm, jobPdf: data.url })
+        }
+        toast({
+          title: "Succès",
+          description: `${type === 'image' ? 'Image' : 'PDF'} téléchargé avec succès.`,
+        })
+      } else {
+        toast({
+          title: "Erreur",
+          description: data.error || "Erreur lors du téléchargement",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      toast({
+        title: "Erreur",
+        description: "Erreur lors du téléchargement du fichier.",
+        variant: "destructive",
+      })
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Jobs</h1>
+            <h1 className="text-3xl font-bold">Offres d'emploi</h1>
             <p className="text-muted-foreground">
-              Manage job postings and applications
+              Gérer les offres d'emploi et les candidatures
             </p>
           </div>
         </div>
-        <div>Loading jobs...</div>
+        <div>Chargement des offres...</div>
       </div>
     )
   }
@@ -245,14 +294,14 @@ export function JobsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Jobs</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Offres d'emploi</h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            Manage job postings and applications
+            Gérer les offres d'emploi et les candidatures
           </p>
         </div>
         <Button onClick={handleCreateJob} className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
-          Create Job
+          Créer une offre
         </Button>
       </div>
 
@@ -260,7 +309,7 @@ export function JobsPage() {
       <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium">Total Jobs</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Total des offres</CardTitle>
             <Briefcase className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
@@ -270,7 +319,7 @@ export function JobsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium">Active Jobs</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Offres actives</CardTitle>
             <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
@@ -282,7 +331,7 @@ export function JobsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium">Total Applications</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Total des candidatures</CardTitle>
             <Users className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
@@ -294,7 +343,7 @@ export function JobsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium">Total Views</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Total des vues</CardTitle>
             <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
@@ -308,9 +357,9 @@ export function JobsPage() {
       {/* Jobs Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Jobs</CardTitle>
+          <CardTitle>Offres récentes</CardTitle>
           <CardDescription>
-            Manage and monitor job postings
+            Gérer et surveiller les offres d'emploi
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -451,6 +500,46 @@ export function JobsPage() {
                   placeholder="React, Node.js, TypeScript..."
                   className="text-sm"
                 />
+              </div>
+
+              <div>
+                <Label htmlFor="jobImage" className="text-sm">Image du poste</Label>
+                <Input
+                  id="jobImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) handleFileUpload(file, 'image')
+                  }}
+                  className="text-sm"
+                />
+                {jobForm.jobImage && (
+                  <div className="mt-2">
+                    <img src={jobForm.jobImage} alt="Job" className="w-32 h-32 object-cover rounded" />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="jobPdf" className="text-sm">PDF du poste</Label>
+                <Input
+                  id="jobPdf"
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) handleFileUpload(file, 'pdf')
+                  }}
+                  className="text-sm"
+                />
+                {jobForm.jobPdf && (
+                  <div className="mt-2">
+                    <a href={jobForm.jobPdf} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                      Voir le PDF
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>

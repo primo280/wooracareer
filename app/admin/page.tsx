@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -51,7 +52,7 @@ import {
   Download,
   Upload,
 } from "lucide-react"
-import { toast } from "@/hooks/use-toast"
+import { toast } from 'react-toastify'
 import { z } from "zod"
 import { createJobSchema } from "@/app/api/admin/jobs/schema"
 
@@ -72,6 +73,8 @@ interface Job {
   requirements?: string
   benefits?: string
   tags?: string[]
+  jobImage?: string
+  jobPdf?: string
 }
 
 interface Application {
@@ -103,6 +106,7 @@ export default function AdminDashboard() {
   })
   const [recentJobs, setRecentJobs] = useState<Job[]>([])
   const [recentApplications, setRecentApplications] = useState<Application[]>([])
+  const [deleteJobId, setDeleteJobId] = useState<number | null>(null)
 
   // Job form state
   const [jobForm, setJobForm] = useState({
@@ -119,7 +123,57 @@ export default function AdminDashboard() {
     companyLogo: "",
     companyWebsite: "",
     expiresAt: "",
+    jobImage: "",
+    jobPdf: "",
   })
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json()
+      if (data.success) {
+        setJobForm(prev => ({ ...prev, jobImage: data.url }))
+        toast.success('Image uploadée avec succès')
+      } else {
+        toast.error(data.error)
+      }
+    } catch (error) {
+      toast.error('Erreur lors de l\'upload de l\'image')
+    }
+  }
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json()
+      if (data.success) {
+        setJobForm(prev => ({ ...prev, jobPdf: data.url }))
+        toast.success('PDF uploadé avec succès')
+      } else {
+        toast.error(data.error)
+      }
+    } catch (error) {
+      toast.error('Erreur lors de l\'upload du PDF')
+    }
+  }
 
   // Check if user is authenticated and has admin role
   useEffect(() => {
@@ -144,7 +198,7 @@ export default function AdminDashboard() {
         setJobs(jobsData.jobs)
       }
     } catch (error) {
-      console.error("Error fetching jobs:", error)
+      console.error("Erreur lors du chargement des offres :", error)
     }
   }
 
@@ -156,7 +210,7 @@ export default function AdminDashboard() {
         setApplications(applicationsData.applications)
       }
     } catch (error) {
-      console.error("Error fetching applications:", error)
+      console.error("Erreur lors du chargement des candidatures :", error)
     }
   }
 
@@ -176,7 +230,7 @@ export default function AdminDashboard() {
         }
       }
     } catch (error) {
-      console.error("Error fetching analytics:", error)
+      console.error("Erreur lors du chargement des statistiques :", error)
     }
   }
 
@@ -232,6 +286,8 @@ export default function AdminDashboard() {
       companyLogo: "",
       companyWebsite: "",
       expiresAt: "",
+      jobImage: "",
+      jobPdf: "",
     })
     setShowJobForm(true)
   }
@@ -252,6 +308,8 @@ export default function AdminDashboard() {
       companyLogo: "",
       companyWebsite: "",
       expiresAt: job.expiresAt ? new Date(job.expiresAt).toISOString().split('T')[0] : "",
+      jobImage: job.jobImage || "",
+      jobPdf: job.jobPdf || "",
     })
     setShowJobForm(true)
   }
@@ -289,11 +347,7 @@ export default function AdminDashboard() {
       const validationResult = createJobSchema.safeParse(jobData)
       if (!validationResult.success) {
         const errors = validationResult.error.errors.map(err => err.message).join(", ")
-        toast({
-          title: "Erreur de validation",
-          description: errors,
-          variant: "destructive",
-        })
+        toast.error("Erreur de validation : " + errors)
         return
       }
 
@@ -314,61 +368,43 @@ export default function AdminDashboard() {
 
       if (data.success) {
         setShowJobForm(false)
-        toast({
-          title: "Succès",
-          description: editingJob ? "Offre mise à jour avec succès." : "Offre créée avec succès.",
-        })
+        toast.success(editingJob ? "Offre mise à jour avec succès." : "Offre créée avec succès.")
         // Refresh data
         await Promise.all([fetchJobs(), fetchStats()])
       } else {
-        toast({
-          title: "Erreur",
-          description: data.error || "Erreur lors de la sauvegarde",
-          variant: "destructive",
-        })
+        toast.error(data.error || "Erreur lors de la sauvegarde")
       }
     } catch (error) {
-      console.error("Error saving job:", error)
-      toast({
-        title: "Erreur",
-        description: "Erreur lors de la sauvegarde de l'offre.",
-        variant: "destructive",
-      })
+      console.error("Erreur lors de la sauvegarde de l'offre :", error)
+      toast.error("Erreur lors de la sauvegarde de l'offre.")
     }
   }
 
-  const handleDeleteJob = async (jobId: number) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette offre ?")) {
-      return
-    }
+  const handleDeleteJob = (jobId: number) => {
+    setDeleteJobId(jobId)
+  }
+
+  const confirmDeleteJob = async () => {
+    if (!deleteJobId) return
 
     try {
-      const response = await fetch(`/api/admin/jobs?ids=${jobId}`, {
+      const response = await fetch(`/api/admin/jobs?ids=${deleteJobId}`, {
         method: "DELETE",
       })
 
       const data = await response.json()
 
       if (data.success) {
-        toast({
-          title: "Succès",
-          description: "Offre supprimée avec succès.",
-        })
+        toast.success("Offre supprimée avec succès.")
         await Promise.all([fetchJobs(), fetchStats()])
       } else {
-        toast({
-          title: "Erreur",
-          description: data.error || "Erreur lors de la suppression",
-          variant: "destructive",
-        })
+        toast.error(data.error || "Erreur lors de la suppression")
       }
     } catch (error) {
-      console.error("Error deleting job:", error)
-      toast({
-        title: "Erreur",
-        description: "Erreur lors de la suppression de l'offre.",
-        variant: "destructive",
-      })
+      console.error("Erreur lors de la suppression de l'offre :", error)
+      toast.error("Erreur lors de la suppression de l'offre.")
+    } finally {
+      setDeleteJobId(null)
     }
   }
 
@@ -390,7 +426,7 @@ export default function AdminDashboard() {
         alert(data.error || "Erreur lors de la mise à jour")
       }
     } catch (error) {
-      console.error("Error updating application:", error)
+      console.error("Erreur lors de la mise à jour de la candidature :", error)
       alert("Erreur lors de la mise à jour")
     }
   }
@@ -406,11 +442,11 @@ export default function AdminDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-100 text-green-800">Actif</Badge>
+        return <Badge className="bg-green-500 text-white border-0">Actif</Badge>
       case "paused":
-        return <Badge className="bg-yellow-100 text-yellow-800">En pause</Badge>
+        return <Badge className="bg-yellow-500 text-white border-0">En pause</Badge>
       case "expired":
-        return <Badge className="bg-red-100 text-red-800">Expiré</Badge>
+        return <Badge className="bg-red-500 text-white border-0">Expiré</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
@@ -419,15 +455,15 @@ export default function AdminDashboard() {
   const getApplicationStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">En attente</Badge>
+        return <Badge className="bg-yellow-500 text-white border-0">En attente</Badge>
       case "reviewing":
-        return <Badge className="bg-blue-100 text-blue-800">En cours</Badge>
+        return <Badge className="bg-blue-500 text-white border-0">En cours</Badge>
       case "interview":
-        return <Badge className="bg-purple-100 text-purple-800">Entretien</Badge>
+        return <Badge className="bg-purple-500 text-white border-0">Entretien</Badge>
       case "accepted":
-        return <Badge className="bg-green-100 text-green-800">Accepté</Badge>
+        return <Badge className="bg-green-500 text-white border-0">Accepté</Badge>
       case "rejected":
-        return <Badge className="bg-red-100 text-red-800">Refusé</Badge>
+        return <Badge className="bg-red-500 text-white border-0">Refusé</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
@@ -452,21 +488,17 @@ export default function AdminDashboard() {
               <p className="text-sm sm:text-base text-gray-600">Gérez vos offres d'emploi et candidatures</p>
             </div>
 
-            {/*
-            
             <Button onClick={handleCreateJob} className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Nouvelle offre
             </Button>
-            */}
-            
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
             <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
@@ -650,78 +682,103 @@ export default function AdminDashboard() {
 
             {/* Jobs Table */}
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg sm:text-xl">Offres d'emploi ({filteredJobs.length})</CardTitle>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg sm:text-xl">Offres d'emploi ({filteredJobs.length})</CardTitle>
+                </div>
+                <Button onClick={handleCreateJob} className="bg-teal-600 hover:bg-teal-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nouvelle offre
+                </Button>
               </CardHeader>
-              <CardContent className="p-0 sm:p-6">
+              <CardContent className="p-0 overflow-visible">
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="min-w-[150px]">Poste</TableHead>
-                        <TableHead className="min-w-[120px]">Entreprise</TableHead>
-                        <TableHead className="min-w-[100px]">Localisation</TableHead>
+                        <TableHead className="min-w-[200px]">Poste</TableHead>
+                        <TableHead className="min-w-[150px]">Entreprise</TableHead>
+                        <TableHead className="min-w-[120px]">Localisation</TableHead>
                         <TableHead className="min-w-[120px]">Salaire</TableHead>
-                        <TableHead className="min-w-[80px]">Statut</TableHead>
-                        <TableHead className="min-w-[80px]">Candidatures</TableHead>
-                        <TableHead className="min-w-[60px]">Vues</TableHead>
-                        <TableHead className="min-w-[80px]">Actions</TableHead>
+                        <TableHead className="min-w-[100px]">Statut</TableHead>
+                        <TableHead className="min-w-[80px] text-center">Candid.</TableHead>
+                       
+                        <TableHead className="min-w-[100px] w-[100px] text-center">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredJobs.map((job) => (
-                        <TableRow key={job.id}>
+                        <TableRow key={job.id} className="group">
                           <TableCell className="font-medium">
-                            <div className="max-w-[150px] truncate" title={job.title}>
+                            <div className="max-w-[200px] truncate" title={job.title}>
                               {job.title}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="max-w-[120px] truncate" title={job.company}>
+                            <div className="max-w-[150px] truncate" title={job.company}>
                               {job.company}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="max-w-[100px] truncate" title={job.location}>
+                            <div className="max-w-[120px] truncate" title={job.location}>
                               {job.location}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="text-sm">
-                              {job.salaryMin ? `${job.salaryMin.toLocaleString()}FCFA` : '0FCFA'} - {job.salaryMax ? `${job.salaryMax.toLocaleString()}FCFA` : '0FCFA'}
+                            <div className="text-sm whitespace-nowrap">
+                              {job.salaryMin ? `${job.salaryMin.toLocaleString()}FCFA` : 'N/A'} - {job.salaryMax ? `${job.salaryMax.toLocaleString()}FCFA` : 'N/A'}
                             </div>
                           </TableCell>
                           <TableCell>{getStatusBadge(job.status)}</TableCell>
                           <TableCell className="text-center">{job.applications}</TableCell>
-                          <TableCell className="text-center">{job.views}</TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                  <MoreHorizontal className="w-4 h-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => window.open(`/jobs/${job.id}`, "_blank")}>
-                                  <Eye className="w-4 h-4 mr-2" />
-                                  Voir
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleEditJob(job)}>
-                                  <Edit className="w-4 h-4 mr-2" />
-                                  Modifier
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDeleteJob(job.id)} className="text-red-600">
-                                  <Trash2 className="w-4 h-4 mr-2" />
-                                  Supprimer
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                          
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(`/jobs/${job.id}`, "_blank")}
+                                title="Voir l'offre"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditJob(job)}
+                                title="Modifier"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteJob(job.id)}
+                                className="text-red-600 hover:text-red-700"
+                                title="Supprimer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 </div>
+                {filteredJobs.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <Briefcase className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Aucune offre trouvée</p>
+                    <Button 
+                      onClick={handleCreateJob} 
+                      className="mt-4 bg-teal-600 hover:bg-teal-700"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Créer votre première offre
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -767,33 +824,35 @@ export default function AdminDashboard() {
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                                   <MoreHorizontal className="w-4 h-4" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
+                              <DropdownMenuContent align="end" className="w-48">
                                 <DropdownMenuItem
                                   onClick={() => handleUpdateApplicationStatus(application.id, "reviewing")}
+                                  className="cursor-pointer"
                                 >
                                   <AlertCircle className="w-4 h-4 mr-2" />
                                   Marquer en cours
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleUpdateApplicationStatus(application.id, "interview")}
+                                  className="cursor-pointer"
                                 >
                                   <Users className="w-4 h-4 mr-2" />
                                   Programmer entretien
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleUpdateApplicationStatus(application.id, "accepted")}
-                                  className="text-green-600"
+                                  className="text-green-600 cursor-pointer focus:text-green-600"
                                 >
                                   <CheckCircle className="w-4 h-4 mr-2" />
                                   Accepter
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleUpdateApplicationStatus(application.id, "rejected")}
-                                  className="text-red-600"
+                                  className="text-red-600 cursor-pointer focus:text-red-600"
                                 >
                                   <XCircle className="w-4 h-4 mr-2" />
                                   Refuser
@@ -958,6 +1017,34 @@ export default function AdminDashboard() {
                   placeholder="https://example.com"
                 />
               </div>
+
+              <div>
+                <Label htmlFor="jobImage">Image de l'offre (optionnel)</Label>
+                <Input
+                  id="jobImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+                {jobForm.jobImage && (
+                  <img src={jobForm.jobImage} alt="Job image" className="w-32 h-32 object-cover mt-2" />
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="jobPdf">PDF de l'offre (optionnel)</Label>
+                <Input
+                  id="jobPdf"
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handlePdfUpload}
+                />
+                {jobForm.jobPdf && (
+                  <a href={jobForm.jobPdf} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline mt-2 block">
+                    Voir le PDF
+                  </a>
+                )}
+              </div>
             </div>
           </div>
 
@@ -971,6 +1058,24 @@ export default function AdminDashboard() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteJobId} onOpenChange={() => setDeleteJobId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer cette offre ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteJob} className="bg-red-600 hover:bg-red-700">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

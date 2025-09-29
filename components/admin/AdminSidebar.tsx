@@ -121,7 +121,7 @@ export function AdminSidebar() {
             </div>
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-bold text-lg">Admin Panel</span>
+            <span className="truncate font-bold text-lg">Panneau d'administration</span>
             <span className="truncate text-xs text-teal-100 opacity-90">
               Plateforme d'emploi
             </span>

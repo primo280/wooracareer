@@ -28,6 +28,8 @@ export interface Job {
   applicationEmail?: string
   companyLogo?: string
   companyWebsite?: string
+  jobImage?: string
+  jobPdf?: string
   tags: string[]
   featured: boolean
   status: "active" | "paused" | "closed"
@@ -68,6 +70,8 @@ export async function getJobs(filters: JobFilters = {}, limit = 20, offset = 0):
       "applicationEmail",
       "companyLogo",
       "companyWebsite",
+      "jobImage",
+      "jobPdf",
       tags,
       featured,
       status,
@@ -201,6 +205,8 @@ export async function getJobById(id: number): Promise<Job | null> {
       "applicationEmail",
       "companyLogo",
       "companyWebsite",
+      "jobImage",
+      "jobPdf",
       tags,
       featured,
       status,

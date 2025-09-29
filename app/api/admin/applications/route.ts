@@ -31,7 +31,13 @@ export async function GET(request: NextRequest) {
       throw error
     })
 
-    return NextResponse.json({ applications })
+    return NextResponse.json({ applications }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     console.error("Error fetching admin applications:", error)
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })

@@ -160,112 +160,201 @@ export function JobsTable({ jobs, loading = false, onEditJob, onDeleteJob }: Job
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Offre</TableHead>
-                <TableHead>Entreprise</TableHead>
-                <TableHead>Localisation</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Salaire</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead className="text-center">Candidatures</TableHead>
-                <TableHead className="text-center">Vues</TableHead>
-                <TableHead className="text-center">Date</TableHead>
-                <TableHead className="w-[50px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {jobs.map((job) => (
-                <TableRow key={job.id} className="hover:bg-gray-50">
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={job.companyLogo} />
-                        <AvatarFallback>
-                          {job.company.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium text-gray-900">{job.title}</div>
-                        <div className="text-sm text-gray-500 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {new Date(job.createdAt).toLocaleDateString("fr-FR")}
+          {/* Desktop Table View */}
+          <div className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Offre</TableHead>
+                  <TableHead>Entreprise</TableHead>
+                  <TableHead>Localisation</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Salaire</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead className="text-center">Candidatures</TableHead>
+                  <TableHead className="text-center">Vues</TableHead>
+                  <TableHead className="text-center">Date</TableHead>
+                  <TableHead className="w-[50px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {jobs.map((job) => (
+                  <TableRow key={job.id} className="hover:bg-gray-50">
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={job.companyLogo} />
+                          <AvatarFallback>
+                            {job.company.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium text-gray-900">{job.title}</div>
+                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {new Date(job.createdAt).toLocaleDateString("fr-FR")}
+                          </div>
                         </div>
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-medium">{job.company}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <MapPin className="w-3 h-3" />
+                        {job.location}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{job.type}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <DollarSign className="w-3 h-3" />
+                        {formatSalary(job.salaryMin || 0, job.salaryMax || 0)}
+                      </div>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(job.status)}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <Users className="w-3 h-3 text-blue-600" />
+                        <span className="font-medium">{job.applications}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <TrendingUp className="w-3 h-3 text-green-600" />
+                        <span className="font-medium">{job.views}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center text-sm text-gray-500">
+                      {job.expiresAt ? new Date(job.expiresAt).toLocaleDateString("fr-FR") : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onClick={() => window.open(`/jobs/${job.id}`, "_blank")}
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Voir l'offre
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => copyJobLink(job.id)}>
+                            <Copy className="w-4 h-4 mr-2" />
+                            Copier le lien
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => onEditJob(job)}>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Modifier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteClick(job)}
+                            className="text-red-600 focus:text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Supprimer
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {jobs.map((job) => (
+              <Card key={job.id} className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3 flex-1">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={job.companyLogo} />
+                      <AvatarFallback>
+                        {job.company.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate">{job.title}</h3>
+                      <p className="text-sm text-gray-600 truncate">{job.company}</p>
+                      <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(job.createdAt).toLocaleDateString("fr-FR")}
+                      </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{job.company}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1 text-gray-600">
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem
+                        onClick={() => window.open(`/jobs/${job.id}`, "_blank")}
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Voir l'offre
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => copyJobLink(job.id)}>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copier le lien
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => onEditJob(job)}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Modifier
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDeleteClick(job)}
+                        className="text-red-600 focus:text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Supprimer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
                       <MapPin className="w-3 h-3" />
                       {job.location}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{job.type}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1 text-gray-600">
-                      <DollarSign className="w-3 h-3" />
-                      {formatSalary(job.salaryMin || 0, job.salaryMax || 0)}
+                    <Badge variant="outline" className="text-xs">{job.type}</Badge>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                    <DollarSign className="w-3 h-3" />
+                    {formatSalary(job.salaryMin || 0, job.salaryMax || 0)}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <Users className="w-3 h-3 text-blue-600" />
+                        <span className="text-sm font-medium">{job.applications}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3 text-green-600" />
+                        <span className="text-sm font-medium">{job.views}</span>
+                      </div>
                     </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(job.status)}</TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <Users className="w-3 h-3 text-blue-600" />
-                      <span className="font-medium">{job.applications}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <TrendingUp className="w-3 h-3 text-green-600" />
-                      <span className="font-medium">{job.views}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center text-sm text-gray-500">
-                    {job.expiresAt ? new Date(job.expiresAt).toLocaleDateString("fr-FR") : "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem
-                          onClick={() => window.open(`/jobs/${job.id}`, "_blank")}
-                        >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Voir l'offre
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => copyJobLink(job.id)}>
-                          <Copy className="w-4 h-4 mr-2" />
-                          Copier le lien
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => onEditJob(job)}>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Modifier
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDeleteClick(job)}
-                          className="text-red-600 focus:text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Supprimer
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    {getStatusBadge(job.status)}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
 
           {jobs.length === 0 && (
             <div className="text-center py-12">

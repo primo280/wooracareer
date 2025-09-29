@@ -7,7 +7,9 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:reset": "npx prisma migrate reset --force",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:seed-users": "tsx prisma/seed-users.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -63,7 +65,9 @@
     "react-dom": "^18",
     "react-hook-form": "^7.60.0",
     "react-resizable-panels": "^2.1.7",
+    "react-toastify": "^11.0.5",
     "recharts": "2.15.4",
+    "sharp": "^0.34.4",
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",

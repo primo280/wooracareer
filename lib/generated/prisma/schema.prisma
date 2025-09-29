@@ -45,8 +45,8 @@ model Job {
   company          String
   location         String
   type             String // 'CDI', 'CDD', 'Stage', 'Freelance'
-  salaryMin        Int?
-  salaryMax        Int?
+  salaryMin        BigInt?
+  salaryMax        BigInt?
   currency         String    @default("EUR")
   description      String
   requirements     String?
@@ -58,6 +58,8 @@ model Job {
   applicationEmail String?
   companyLogo      String?
   companyWebsite   String?
+  jobImage         String? // Path to uploaded job image
+  jobPdf           String? // Path to uploaded job PDF
   tags             String[] // Array of skill tags
   featured         Boolean   @default(false)
   status           String    @default("active") // 'active', 'paused', 'closed'

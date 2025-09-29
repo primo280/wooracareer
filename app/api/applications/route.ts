@@ -122,21 +122,27 @@ export async function POST(request: NextRequest) {
     const application = await sql`
       INSERT INTO applications ("jobId", "candidateId", "coverLetter", "cvUrl", "status", "appliedAt", "updatedAt")
       VALUES (${job_id}, ${candidateId}, ${cover_letter || null}, ${cvUrl || null}, 'pending', NOW(), NOW())
-      RETURNING *
+      RETURNING id, "jobId", "candidateId", "coverLetter", "cvUrl", "status", "appliedAt", "updatedAt"
     `
     console.log("Created application:", application)
+
+    // Create notifications
+    const candidateMessage = `Votre candidature pour "${job[0].title}" a été envoyée avec succès.`
+    const employerMessage = `Vous avez reçu une nouvelle candidature pour "${job[0].title}".`
 
     // Create notification for candidate
     await sql`
       INSERT INTO notifications ("userId", type, title, message, read, "createdAt")
-      VALUES (${userId}, 'application_status', 'Candidature envoyée', 'Votre candidature pour "${job[0].title}" a été envoyée avec succès.', false, NOW())
+      VALUES (${userId}, 'application_status', 'Candidature envoyée', ${candidateMessage}, false, NOW())
     `
 
-    // Create notification for employer
-    await sql`
-      INSERT INTO notifications ("userId", type, title, message, read, "createdAt")
-      VALUES (${job[0].createdBy}, 'new_application', 'Nouvelle candidature', 'Vous avez reçu une nouvelle candidature pour "${job[0].title}".', false, NOW())
-    `
+    // Create notification for employer if createdBy exists
+    if (job[0].createdBy) {
+      await sql`
+        INSERT INTO notifications ("userId", type, title, message, read, "createdAt")
+        VALUES (${job[0].createdBy}, 'new_application', 'Nouvelle candidature', ${employerMessage}, false, NOW())
+      `
+    }
 
     return NextResponse.json({ success: true, application: application[0] })
   } catch (error) {

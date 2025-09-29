@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation"
 import { Building } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSession, signOut } from "next-auth/react"
+import WooraLogo from "@/public/logo/woora.jpg"
+import Image from "next/image"
 
 export default function Header() {
   const router = useRouter()
@@ -14,9 +16,23 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8    ">
         <div className="flex justify-center items-center h-16 ">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-              <Building className="w-5 h-5 text-white" />
+           
+             <div className="  rounded-lg flex items-center justify-center">
+              
+              <Image
+              className="  text-white  rounded-[20px] "
+              src={WooraLogo}
+              alt="wooraLogo"
+              height={50}
+              width={50}
+              
+              />
             </div>
+          
+          
+
+
+
             <h1 className="text-xl font-bold text-gray-900">Wooracareer</h1>
           </div>
           

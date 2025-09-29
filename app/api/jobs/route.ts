@@ -3,6 +3,7 @@ import { sql, getJobs, getJobsCount } from "../../../lib/database"
 import { jobFiltersSchema, type JobFiltersInput } from "../admin/jobs/schema"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export async function GET(request: NextRequest) {
   try {
@@ -64,6 +65,14 @@ export async function GET(request: NextRequest) {
         totalPages,
         hasNext: page < totalPages,
         hasPrev: page > 1
+      }
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store',
+        'Vary': '*'
       }
     })
   } catch (error) {

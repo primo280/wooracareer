@@ -17,6 +17,8 @@ export interface Job {
   applicationEmail?: string
   companyLogo?: string
   companyWebsite?: string
+  jobImage?: string
+  jobPdf?: string
   tags: string[]
   featured?: boolean
   status: string

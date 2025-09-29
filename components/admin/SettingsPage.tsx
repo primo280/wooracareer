@@ -37,13 +37,13 @@ export function SettingsPage() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Settings</h1>
+            <h1 className="text-3xl font-bold">Paramètres</h1>
             <p className="text-muted-foreground">
-              Manage platform configuration and preferences
+              Gérer la configuration de la plateforme et les préférences
             </p>
           </div>
         </div>
-        <div>Loading settings...</div>
+        <div>Chargement des paramètres...</div>
       </div>
     )
   }
@@ -53,9 +53,9 @@ export function SettingsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-3xl font-bold">Paramètres</h1>
           <p className="text-muted-foreground">
-            Manage platform configuration and preferences
+            Gérer la configuration de la plateforme et les préférences
           </p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export function SettingsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Settings</CardTitle>
+            <CardTitle className="text-sm font-medium">Paramètres actifs</CardTitle>
             <Settings className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -74,31 +74,31 @@ export function SettingsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Security</CardTitle>
+            <CardTitle className="text-sm font-medium">Sécurité</CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-teal-600">{settings[0]?.data.platform_status === 'active' ? 'Enabled' : 'Disabled'}</div>
+            <div className="text-2xl font-bold text-teal-600">{settings[0]?.data.platform_status === 'active' ? 'Activé' : 'Désactivé'}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Database</CardTitle>
+            <CardTitle className="text-sm font-medium">Base de données</CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-teal-700">Connected</div>
+            <div className="text-2xl font-bold text-teal-700">Connecté</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Email Service</CardTitle>
+            <CardTitle className="text-sm font-medium">Service email</CardTitle>
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-teal-500">Configured</div>
+            <div className="text-2xl font-bold text-teal-500">Configuré</div>
           </CardContent>
         </Card>
       </div>

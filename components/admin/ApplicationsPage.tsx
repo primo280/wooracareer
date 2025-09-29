@@ -1,21 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { ApplicationsTable } from "@/components/admin/ApplicationsTable"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Users, Clock } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { FileText, Users, Clock, RefreshCw } from "lucide-react"
 
 export function ApplicationsPage() {
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
-  useEffect(() => {
-    fetchApplications()
-  }, [])
-
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/applications')
+      setRefreshing(true)
+      const response = await fetch(`/api/admin/applications?t=${Date.now()}`, { cache: 'no-cache' })
       if (response.ok) {
         const data = await response.json()
         setApplications(data.applications || [])
@@ -24,8 +23,18 @@ export function ApplicationsPage() {
       console.error('Error fetching applications:', error)
     } finally {
       setLoading(false)
+      setRefreshing(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchApplications()
+
+    // Set up polling for real-time updates
+    const interval = setInterval(fetchApplications, 30000) // Refresh every 30 seconds
+
+    return () => clearInterval(interval)
+  }, [fetchApplications])
 
   const handleUpdateStatus = async (applicationId: number, newStatus: string) => {
     try {
@@ -72,6 +81,10 @@ export function ApplicationsPage() {
             Manage job applications and candidate information
           </p>
         </div>
+        <Button onClick={fetchApplications} variant="outline" size="sm" disabled={refreshing}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          {refreshing ? 'Actualisation...' : 'Actualiser'}
+        </Button>
       </div>
 
       {/* Stats Cards */}

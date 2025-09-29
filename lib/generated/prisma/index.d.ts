@@ -2538,8 +2538,8 @@ export namespace Prisma {
 
   export type JobSumAggregateOutputType = {
     id: number | null
-    salaryMin: number | null
-    salaryMax: number | null
+    salaryMin: bigint | null
+    salaryMax: bigint | null
     viewsCount: number | null
   }
 
@@ -2549,8 +2549,8 @@ export namespace Prisma {
     company: string | null
     location: string | null
     type: string | null
-    salaryMin: number | null
-    salaryMax: number | null
+    salaryMin: bigint | null
+    salaryMax: bigint | null
     currency: string | null
     description: string | null
     requirements: string | null
@@ -2562,6 +2562,8 @@ export namespace Prisma {
     applicationEmail: string | null
     companyLogo: string | null
     companyWebsite: string | null
+    jobImage: string | null
+    jobPdf: string | null
     featured: boolean | null
     status: string | null
     createdAt: Date | null
@@ -2577,8 +2579,8 @@ export namespace Prisma {
     company: string | null
     location: string | null
     type: string | null
-    salaryMin: number | null
-    salaryMax: number | null
+    salaryMin: bigint | null
+    salaryMax: bigint | null
     currency: string | null
     description: string | null
     requirements: string | null
@@ -2590,6 +2592,8 @@ export namespace Prisma {
     applicationEmail: string | null
     companyLogo: string | null
     companyWebsite: string | null
+    jobImage: string | null
+    jobPdf: string | null
     featured: boolean | null
     status: string | null
     createdAt: Date | null
@@ -2618,6 +2622,8 @@ export namespace Prisma {
     applicationEmail: number
     companyLogo: number
     companyWebsite: number
+    jobImage: number
+    jobPdf: number
     tags: number
     featured: number
     status: number
@@ -2663,6 +2669,8 @@ export namespace Prisma {
     applicationEmail?: true
     companyLogo?: true
     companyWebsite?: true
+    jobImage?: true
+    jobPdf?: true
     featured?: true
     status?: true
     createdAt?: true
@@ -2691,6 +2699,8 @@ export namespace Prisma {
     applicationEmail?: true
     companyLogo?: true
     companyWebsite?: true
+    jobImage?: true
+    jobPdf?: true
     featured?: true
     status?: true
     createdAt?: true
@@ -2719,6 +2729,8 @@ export namespace Prisma {
     applicationEmail?: true
     companyLogo?: true
     companyWebsite?: true
+    jobImage?: true
+    jobPdf?: true
     tags?: true
     featured?: true
     status?: true
@@ -2822,8 +2834,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin: number | null
-    salaryMax: number | null
+    salaryMin: bigint | null
+    salaryMax: bigint | null
     currency: string
     description: string
     requirements: string | null
@@ -2835,6 +2847,8 @@ export namespace Prisma {
     applicationEmail: string | null
     companyLogo: string | null
     companyWebsite: string | null
+    jobImage: string | null
+    jobPdf: string | null
     tags: string[]
     featured: boolean
     status: string
@@ -2883,6 +2897,8 @@ export namespace Prisma {
     applicationEmail?: boolean
     companyLogo?: boolean
     companyWebsite?: boolean
+    jobImage?: boolean
+    jobPdf?: boolean
     tags?: boolean
     featured?: boolean
     status?: boolean
@@ -2915,6 +2931,8 @@ export namespace Prisma {
     applicationEmail?: boolean
     companyLogo?: boolean
     companyWebsite?: boolean
+    jobImage?: boolean
+    jobPdf?: boolean
     tags?: boolean
     featured?: boolean
     status?: boolean
@@ -2945,6 +2963,8 @@ export namespace Prisma {
     applicationEmail?: boolean
     companyLogo?: boolean
     companyWebsite?: boolean
+    jobImage?: boolean
+    jobPdf?: boolean
     tags?: boolean
     featured?: boolean
     status?: boolean
@@ -2975,6 +2995,8 @@ export namespace Prisma {
     applicationEmail?: boolean
     companyLogo?: boolean
     companyWebsite?: boolean
+    jobImage?: boolean
+    jobPdf?: boolean
     tags?: boolean
     featured?: boolean
     status?: boolean
@@ -2985,7 +3007,7 @@ export namespace Prisma {
     viewsCount?: boolean
   }
 
-  export type JobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "company" | "location" | "type" | "salaryMin" | "salaryMax" | "currency" | "description" | "requirements" | "benefits" | "remoteWork" | "experienceLevel" | "contractDuration" | "applicationUrl" | "applicationEmail" | "companyLogo" | "companyWebsite" | "tags" | "featured" | "status" | "createdAt" | "updatedAt" | "expiresAt" | "createdBy" | "viewsCount", ExtArgs["result"]["job"]>
+  export type JobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "company" | "location" | "type" | "salaryMin" | "salaryMax" | "currency" | "description" | "requirements" | "benefits" | "remoteWork" | "experienceLevel" | "contractDuration" | "applicationUrl" | "applicationEmail" | "companyLogo" | "companyWebsite" | "jobImage" | "jobPdf" | "tags" | "featured" | "status" | "createdAt" | "updatedAt" | "expiresAt" | "createdBy" | "viewsCount", ExtArgs["result"]["job"]>
   export type JobInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     applications?: boolean | Job$applicationsArgs<ExtArgs>
     creator?: boolean | Job$creatorArgs<ExtArgs>
@@ -3010,8 +3032,8 @@ export namespace Prisma {
       company: string
       location: string
       type: string
-      salaryMin: number | null
-      salaryMax: number | null
+      salaryMin: bigint | null
+      salaryMax: bigint | null
       currency: string
       description: string
       requirements: string | null
@@ -3023,6 +3045,8 @@ export namespace Prisma {
       applicationEmail: string | null
       companyLogo: string | null
       companyWebsite: string | null
+      jobImage: string | null
+      jobPdf: string | null
       tags: string[]
       featured: boolean
       status: string
@@ -3461,8 +3485,8 @@ export namespace Prisma {
     readonly company: FieldRef<"Job", 'String'>
     readonly location: FieldRef<"Job", 'String'>
     readonly type: FieldRef<"Job", 'String'>
-    readonly salaryMin: FieldRef<"Job", 'Int'>
-    readonly salaryMax: FieldRef<"Job", 'Int'>
+    readonly salaryMin: FieldRef<"Job", 'BigInt'>
+    readonly salaryMax: FieldRef<"Job", 'BigInt'>
     readonly currency: FieldRef<"Job", 'String'>
     readonly description: FieldRef<"Job", 'String'>
     readonly requirements: FieldRef<"Job", 'String'>
@@ -3474,6 +3498,8 @@ export namespace Prisma {
     readonly applicationEmail: FieldRef<"Job", 'String'>
     readonly companyLogo: FieldRef<"Job", 'String'>
     readonly companyWebsite: FieldRef<"Job", 'String'>
+    readonly jobImage: FieldRef<"Job", 'String'>
+    readonly jobPdf: FieldRef<"Job", 'String'>
     readonly tags: FieldRef<"Job", 'String[]'>
     readonly featured: FieldRef<"Job", 'Boolean'>
     readonly status: FieldRef<"Job", 'String'>
@@ -7499,6 +7525,8 @@ export namespace Prisma {
     applicationEmail: 'applicationEmail',
     companyLogo: 'companyLogo',
     companyWebsite: 'companyWebsite',
+    jobImage: 'jobImage',
+    jobPdf: 'jobPdf',
     tags: 'tags',
     featured: 'featured',
     status: 'status',
@@ -7646,6 +7674,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'BigInt'
+   */
+  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+  /**
+   * Reference to a field of type 'BigInt[]'
+   */
+  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -7754,8 +7796,8 @@ export namespace Prisma {
     company?: StringFilter<"Job"> | string
     location?: StringFilter<"Job"> | string
     type?: StringFilter<"Job"> | string
-    salaryMin?: IntNullableFilter<"Job"> | number | null
-    salaryMax?: IntNullableFilter<"Job"> | number | null
+    salaryMin?: BigIntNullableFilter<"Job"> | bigint | number | null
+    salaryMax?: BigIntNullableFilter<"Job"> | bigint | number | null
     currency?: StringFilter<"Job"> | string
     description?: StringFilter<"Job"> | string
     requirements?: StringNullableFilter<"Job"> | string | null
@@ -7767,6 +7809,8 @@ export namespace Prisma {
     applicationEmail?: StringNullableFilter<"Job"> | string | null
     companyLogo?: StringNullableFilter<"Job"> | string | null
     companyWebsite?: StringNullableFilter<"Job"> | string | null
+    jobImage?: StringNullableFilter<"Job"> | string | null
+    jobPdf?: StringNullableFilter<"Job"> | string | null
     tags?: StringNullableListFilter<"Job">
     featured?: BoolFilter<"Job"> | boolean
     status?: StringFilter<"Job"> | string
@@ -7798,6 +7842,8 @@ export namespace Prisma {
     applicationEmail?: SortOrderInput | SortOrder
     companyLogo?: SortOrderInput | SortOrder
     companyWebsite?: SortOrderInput | SortOrder
+    jobImage?: SortOrderInput | SortOrder
+    jobPdf?: SortOrderInput | SortOrder
     tags?: SortOrder
     featured?: SortOrder
     status?: SortOrder
@@ -7819,8 +7865,8 @@ export namespace Prisma {
     company?: StringFilter<"Job"> | string
     location?: StringFilter<"Job"> | string
     type?: StringFilter<"Job"> | string
-    salaryMin?: IntNullableFilter<"Job"> | number | null
-    salaryMax?: IntNullableFilter<"Job"> | number | null
+    salaryMin?: BigIntNullableFilter<"Job"> | bigint | number | null
+    salaryMax?: BigIntNullableFilter<"Job"> | bigint | number | null
     currency?: StringFilter<"Job"> | string
     description?: StringFilter<"Job"> | string
     requirements?: StringNullableFilter<"Job"> | string | null
@@ -7832,6 +7878,8 @@ export namespace Prisma {
     applicationEmail?: StringNullableFilter<"Job"> | string | null
     companyLogo?: StringNullableFilter<"Job"> | string | null
     companyWebsite?: StringNullableFilter<"Job"> | string | null
+    jobImage?: StringNullableFilter<"Job"> | string | null
+    jobPdf?: StringNullableFilter<"Job"> | string | null
     tags?: StringNullableListFilter<"Job">
     featured?: BoolFilter<"Job"> | boolean
     status?: StringFilter<"Job"> | string
@@ -7863,6 +7911,8 @@ export namespace Prisma {
     applicationEmail?: SortOrderInput | SortOrder
     companyLogo?: SortOrderInput | SortOrder
     companyWebsite?: SortOrderInput | SortOrder
+    jobImage?: SortOrderInput | SortOrder
+    jobPdf?: SortOrderInput | SortOrder
     tags?: SortOrder
     featured?: SortOrder
     status?: SortOrder
@@ -7887,8 +7937,8 @@ export namespace Prisma {
     company?: StringWithAggregatesFilter<"Job"> | string
     location?: StringWithAggregatesFilter<"Job"> | string
     type?: StringWithAggregatesFilter<"Job"> | string
-    salaryMin?: IntNullableWithAggregatesFilter<"Job"> | number | null
-    salaryMax?: IntNullableWithAggregatesFilter<"Job"> | number | null
+    salaryMin?: BigIntNullableWithAggregatesFilter<"Job"> | bigint | number | null
+    salaryMax?: BigIntNullableWithAggregatesFilter<"Job"> | bigint | number | null
     currency?: StringWithAggregatesFilter<"Job"> | string
     description?: StringWithAggregatesFilter<"Job"> | string
     requirements?: StringNullableWithAggregatesFilter<"Job"> | string | null
@@ -7900,6 +7950,8 @@ export namespace Prisma {
     applicationEmail?: StringNullableWithAggregatesFilter<"Job"> | string | null
     companyLogo?: StringNullableWithAggregatesFilter<"Job"> | string | null
     companyWebsite?: StringNullableWithAggregatesFilter<"Job"> | string | null
+    jobImage?: StringNullableWithAggregatesFilter<"Job"> | string | null
+    jobPdf?: StringNullableWithAggregatesFilter<"Job"> | string | null
     tags?: StringNullableListFilter<"Job">
     featured?: BoolWithAggregatesFilter<"Job"> | boolean
     status?: StringWithAggregatesFilter<"Job"> | string
@@ -8256,8 +8308,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -8269,6 +8321,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -8286,8 +8340,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -8299,6 +8353,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -8315,8 +8371,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8328,6 +8384,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -8345,8 +8403,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8358,6 +8416,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -8375,8 +8435,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -8388,6 +8448,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -8403,8 +8465,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8416,6 +8478,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -8431,8 +8495,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8444,6 +8508,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -8905,15 +8971,15 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  export type BigIntNullableFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -8974,6 +9040,8 @@ export namespace Prisma {
     applicationEmail?: SortOrder
     companyLogo?: SortOrder
     companyWebsite?: SortOrder
+    jobImage?: SortOrder
+    jobPdf?: SortOrder
     tags?: SortOrder
     featured?: SortOrder
     status?: SortOrder
@@ -9010,6 +9078,8 @@ export namespace Prisma {
     applicationEmail?: SortOrder
     companyLogo?: SortOrder
     companyWebsite?: SortOrder
+    jobImage?: SortOrder
+    jobPdf?: SortOrder
     featured?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
@@ -9038,6 +9108,8 @@ export namespace Prisma {
     applicationEmail?: SortOrder
     companyLogo?: SortOrder
     companyWebsite?: SortOrder
+    jobImage?: SortOrder
+    jobPdf?: SortOrder
     featured?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
@@ -9070,20 +9142,20 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+  export type BigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableWithAggregatesFilter<$PrismaModel> | bigint | number | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
+    _sum?: NestedBigIntNullableFilter<$PrismaModel>
+    _min?: NestedBigIntNullableFilter<$PrismaModel>
+    _max?: NestedBigIntNullableFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -9432,12 +9504,12 @@ export namespace Prisma {
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type NullableBigIntFieldUpdateOperationsInput = {
+    set?: bigint | number | null
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -9732,6 +9804,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedBigIntNullableFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -9775,20 +9858,20 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+  export type NestedBigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableWithAggregatesFilter<$PrismaModel> | bigint | number | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
+    _sum?: NestedBigIntNullableFilter<$PrismaModel>
+    _min?: NestedBigIntNullableFilter<$PrismaModel>
+    _max?: NestedBigIntNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
@@ -9829,8 +9912,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -9842,6 +9925,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -9858,8 +9943,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -9871,6 +9956,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -9988,8 +10075,8 @@ export namespace Prisma {
     company?: StringFilter<"Job"> | string
     location?: StringFilter<"Job"> | string
     type?: StringFilter<"Job"> | string
-    salaryMin?: IntNullableFilter<"Job"> | number | null
-    salaryMax?: IntNullableFilter<"Job"> | number | null
+    salaryMin?: BigIntNullableFilter<"Job"> | bigint | number | null
+    salaryMax?: BigIntNullableFilter<"Job"> | bigint | number | null
     currency?: StringFilter<"Job"> | string
     description?: StringFilter<"Job"> | string
     requirements?: StringNullableFilter<"Job"> | string | null
@@ -10001,6 +10088,8 @@ export namespace Prisma {
     applicationEmail?: StringNullableFilter<"Job"> | string | null
     companyLogo?: StringNullableFilter<"Job"> | string | null
     companyWebsite?: StringNullableFilter<"Job"> | string | null
+    jobImage?: StringNullableFilter<"Job"> | string | null
+    jobPdf?: StringNullableFilter<"Job"> | string | null
     tags?: StringNullableListFilter<"Job">
     featured?: BoolFilter<"Job"> | boolean
     status?: StringFilter<"Job"> | string
@@ -10322,8 +10411,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -10335,6 +10424,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -10351,8 +10442,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -10364,6 +10455,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -10435,8 +10528,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10448,6 +10541,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -10464,8 +10559,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10477,6 +10572,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -10607,8 +10704,8 @@ export namespace Prisma {
     company: string
     location: string
     type: string
-    salaryMin?: number | null
-    salaryMax?: number | null
+    salaryMin?: bigint | number | null
+    salaryMax?: bigint | number | null
     currency?: string
     description: string
     requirements?: string | null
@@ -10620,6 +10717,8 @@ export namespace Prisma {
     applicationEmail?: string | null
     companyLogo?: string | null
     companyWebsite?: string | null
+    jobImage?: string | null
+    jobPdf?: string | null
     tags?: JobCreatetagsInput | string[]
     featured?: boolean
     status?: string
@@ -10660,8 +10759,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10673,6 +10772,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -10689,8 +10790,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10702,6 +10803,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string
@@ -10718,8 +10821,8 @@ export namespace Prisma {
     company?: StringFieldUpdateOperationsInput | string
     location?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    salaryMin?: NullableIntFieldUpdateOperationsInput | number | null
-    salaryMax?: NullableIntFieldUpdateOperationsInput | number | null
+    salaryMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    salaryMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     currency?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10731,6 +10834,8 @@ export namespace Prisma {
     applicationEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
     companyWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    jobImage?: NullableStringFieldUpdateOperationsInput | string | null
+    jobPdf?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: JobUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     status?: StringFieldUpdateOperationsInput | string

@@ -34,6 +34,8 @@ import {
   MessageCircle,
   Instagram,
   Copy,
+  Download,
+  Image as ImageIcon,
 } from "lucide-react"
 
 interface Job {
@@ -58,6 +60,8 @@ interface Job {
   experienceLevel?: string
   applicationUrl?: string
   applicationEmail?: string
+  jobImage?: string
+  jobPdf?: string
 }
 
 export default function JobDetailsPage() {
@@ -83,32 +87,32 @@ export default function JobDetailsPage() {
         // Validate job ID
         const jobId = Number.parseInt(params.id as string)
         if (isNaN(jobId) || jobId <= 0) {
-          console.error("Invalid job ID:", params.id)
+          console.error("ID d'offre invalide :", params.id)
           setJob(null)
           setLoading(false)
           return
         }
 
-        console.log("Fetching job with ID:", jobId) // Debug log
+        console.log("Chargement de l'offre avec ID :", jobId) // Debug log
         const response = await fetch(`/api/jobs/${jobId}`)
 
         if (!response.ok) {
-          console.error("API response not OK:", response.status, response.statusText)
+          console.error("Réponse API non valide :", response.status, response.statusText)
           setJob(null)
           return
         }
 
         const data = await response.json()
-        console.log("API response data:", data) // Debug log
+        console.log("Données de réponse API :", data) // Debug log
 
         if (data.job) {
           setJob(data.job)
         } else {
-          console.error("No job found in response:", data)
+          console.error("Aucune offre trouvée dans la réponse :", data)
           setJob(null)
         }
       } catch (error) {
-        console.error("Error fetching job:", error)
+        console.error("Erreur lors du chargement de l'offre :", error)
         setJob(null)
       } finally {
         setLoading(false)
@@ -118,7 +122,7 @@ export default function JobDetailsPage() {
     if (params.id) {
       fetchJob()
     } else {
-      console.error("No job ID in params")
+      console.error("Aucun ID d'offre dans les paramètres")
       setJob(null)
       setLoading(false)
     }
@@ -327,8 +331,8 @@ export default function JobDetailsPage() {
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-emerald-400 rounded-xl blur-lg opacity-30"></div>
                   <img
-                    src={job.companyLogo || "/placeholder.svg"}
-                    alt={`${job.company} logo`}
+                    src={job.jobImage }
+                    alt={job.jobImage ? `Image pour ${job.title}` : `${job.company} logo`}
                     className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border-2 border-white shadow-lg"
                   />
                 </div>
@@ -363,6 +367,8 @@ export default function JobDetailsPage() {
                   </div>
                 </div>
               </div>
+
+
             </div>
 
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full sm:w-auto">
@@ -382,6 +388,25 @@ export default function JobDetailsPage() {
               )}
 
               <div className="flex gap-2 justify-center sm:justify-start">
+                {job.jobPdf && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = job.jobPdf!;
+                      link.download = `${job.title.replace(/\s+/g, '_')}.pdf`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                    className="hover:bg-green-50 hover:border-green-200 transition-colors"
+                    title="Télécharger le PDF"
+                  >
+                    <Download className="w-4 h-4 mr-1" />
+                    PDF
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   size="icon"

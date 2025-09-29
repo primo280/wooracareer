@@ -44,13 +44,13 @@ export function AnalyticsPage() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Analytics</h1>
+            <h1 className="text-3xl font-bold">Analyses</h1>
             <p className="text-muted-foreground">
-              Comprehensive platform analytics and insights
+              Analyses complètes de la plateforme et insights
             </p>
           </div>
         </div>
-        <div>Loading analytics...</div>
+        <div>Chargement des analyses...</div>
       </div>
     )
   }
@@ -60,13 +60,13 @@ export function AnalyticsPage() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Analytics</h1>
+            <h1 className="text-3xl font-bold">Analyses</h1>
             <p className="text-muted-foreground">
-              Comprehensive platform analytics and insights
+              Analyses complètes de la plateforme et insights
             </p>
           </div>
         </div>
-        <div>Error loading analytics data</div>
+        <div>Erreur lors du chargement des données d'analyse</div>
       </div>
     )
   }
@@ -76,19 +76,19 @@ export function AnalyticsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Analytics</h1>
+          <h1 className="text-3xl font-bold">Analyses</h1>
           <p className="text-muted-foreground">
-            Comprehensive platform analytics and insights
+            Analyses complètes de la plateforme et insights
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleRefresh}>
             <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            Actualiser
           </Button>
           <Button onClick={handleExport} className="bg-teal-600 hover:bg-teal-700">
             <Download className="h-4 w-4 mr-2" />
-            Export
+            Exporter
           </Button>
         </div>
       </div>
@@ -97,33 +97,33 @@ export function AnalyticsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Platform Health</CardTitle>
+            <CardTitle className="text-sm font-medium">Santé de la plateforme</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-teal-600">{analytics.overview.active_jobs > 0 ? 'Active' : 'Inactive'}</div>
             <p className="text-xs text-muted-foreground">
-              {analytics.overview.active_jobs} active jobs
+              {analytics.overview.active_jobs} offres actives
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
+            <CardTitle className="text-sm font-medium">Total des candidatures</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-teal-700">{analytics.overview.total_applications}</div>
             <p className="text-xs text-muted-foreground">
-              All time applications
+              Candidatures de tous les temps
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">User Engagement</CardTitle>
+            <CardTitle className="text-sm font-medium">Engagement des utilisateurs</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -131,14 +131,14 @@ export function AnalyticsPage() {
               {analytics.overview.total_users > 0 ? ((analytics.overview.total_applications / analytics.overview.total_users) * 100).toFixed(1) : 0}%
             </div>
             <p className="text-xs text-muted-foreground">
-              Applications per user
+              Candidatures par utilisateur
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Taux de conversion</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -146,7 +146,7 @@ export function AnalyticsPage() {
               {analytics.overview.total_jobs > 0 ? ((analytics.overview.total_applications / analytics.overview.total_jobs) * 100).toFixed(1) : 0}%
             </div>
             <p className="text-xs text-muted-foreground">
-              Applications per job
+              Candidatures par offre
             </p>
           </CardContent>
         </Card>

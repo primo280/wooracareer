@@ -43,13 +43,15 @@ export async function POST(request: NextRequest) {
     const job = await sql`
       INSERT INTO jobs (
         title, company, location, type, "salaryMin", "salaryMax",
-        description, requirements, benefits, tags, "expiresAt", status, "updatedAt"
+        description, requirements, benefits, tags, "expiresAt", status, "updatedAt",
+        "jobImage", "jobPdf"
       )
       VALUES (
         ${jobData.title}, ${jobData.company}, ${jobData.location}, ${jobData.type},
         ${jobData.salaryMin}, ${jobData.salaryMax}, ${jobData.description},
         ${jobData.requirements}, ${jobData.benefits}, ${jobData.tags},
-        ${jobData.expiresAt}, 'active', NOW()
+        ${jobData.expiresAt}, 'active', NOW(),
+        ${jobData.jobImage}, ${jobData.jobPdf}
       )
       RETURNING *
     `
@@ -102,6 +104,8 @@ export async function PUT(request: NextRequest) {
     if (updateFields.tags !== undefined) updateData.tags = updateFields.tags
     if (updateFields.status !== undefined) updateData.status = updateFields.status
     if (updateFields.expiresAt !== undefined) updateData.expiresAt = updateFields.expiresAt
+    if (updateFields.jobImage !== undefined) updateData.jobImage = updateFields.jobImage
+    if (updateFields.jobPdf !== undefined) updateData.jobPdf = updateFields.jobPdf
 
     // Update the job
     const result = await sql`
@@ -118,6 +122,8 @@ export async function PUT(request: NextRequest) {
         tags = ${updateData.tags ?? existingJob[0].tags},
         status = ${updateData.status ?? existingJob[0].status},
         "expiresAt" = ${updateData.expiresAt ?? existingJob[0].expiresAt},
+        "jobImage" = ${updateData.jobImage ?? existingJob[0].jobImage},
+        "jobPdf" = ${updateData.jobPdf ?? existingJob[0].jobPdf},
         "updatedAt" = ${updateData.updatedAt}
       WHERE id = ${id}
       RETURNING *

@@ -12,6 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { signIn } from "next-auth/react"
 import { useSession } from "next-auth/react"
 import { useEffect } from "react"
+import WooraLogo from "@/public/logo/woora.jpg"
+import Image from "next/image"
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
@@ -82,7 +84,22 @@ export default function SignInPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-green-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-teal-800">JobBoard</CardTitle>
+          <div className="flex items-center space-x-2 justify-center">
+                     
+                       <div className="  rounded-lg flex items-center justify-center">
+                        
+                        <Image
+                        className="  text-white  rounded-[20px] "
+                        src={WooraLogo}
+                        alt="wooraLogo"
+                        height={50}
+                        width={50}
+                        
+                        />
+                      </div>
+              
+                    </div>
+          <CardTitle className="text-2xl font-bold text-teal-800">WOORACAREER</CardTitle>
           <CardDescription>Connectez-vous pour accéder à votre espace candidat</CardDescription>
         </CardHeader>
         <CardContent>
